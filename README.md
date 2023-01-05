@@ -20,7 +20,7 @@ Scripts for setting up a development environment in university's computers.
 
 #### `-InstallPython`
 
-Install Python and related VSCode toolings.
+Install Python and related VSCode tooling.
 
 ## Cleanup
 
