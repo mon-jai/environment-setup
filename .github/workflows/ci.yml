@@ -9,17 +9,16 @@ jobs:
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
-          echo (New-WinUserLanguageList -Language "en-US")
-  #         . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))
-  #         Write-Host $Error
+          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))
+          Write-Host $Error
 
-  # test-python:
-  #   name: Test setup script with Python installation
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Run setup-environment.ps1 with --InstallPython flag
-  #       shell: pwsh
-  #       run: |
-  #         . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-  #           -InstallPython
-  #         Write-Host $Error
+  test-python:
+    name: Test setup script with Python installation
+    runs-on: windows-latest
+    steps:
+      - name: Run setup-environment.ps1 with --InstallPython flag
+        shell: powershell
+        run: |
+          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
+            -InstallPython
+          Write-Host $Error
