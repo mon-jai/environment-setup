@@ -20,7 +20,7 @@ jobs:
           Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" $VSCodeDownloadPath
           Expand-Archive $VSCodeDownloadPath -DestinationPath $VSCodePath
           
-          $VSCodePath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "$VSCodePath/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Run setup-environment.ps1
         shell: powershell
