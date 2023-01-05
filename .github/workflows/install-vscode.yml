@@ -1,0 +1,13 @@
+name: Install Visual Studio Code
+
+on: workflow_call
+
+jobs:
+  install-vscode:
+    steps:
+      - shell: powershell
+        run: |
+          Import-Module BitsTransfer
+          $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
+          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
