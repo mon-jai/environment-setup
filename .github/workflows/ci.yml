@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Run setup-environment.ps1
-        shell: pwsh
+        shell: powershell
         run: |
           echo (New-WinUserLanguageList -Language "en-US")
   #         . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))
