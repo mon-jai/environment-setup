@@ -41,7 +41,7 @@ Start-Job -Name 'Install Windows Terminal' -ScriptBlock {
 
   Start-BitsTransfer  $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
   Start-BitsTransfer  $windowsTerminalDownloadURL $windowsTerminalDownloadPath
-  
+
   try {
     Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-Null
     Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-Null
@@ -71,7 +71,7 @@ if ($InstallPython) {
     Remove-Item $pythonDownloadPath
 
     # Reload PATH to run python and pip, https://stackoverflow.com/a/31845512
-    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") 
+    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-Null
@@ -117,7 +117,7 @@ Start-Job -Name 'Configure VSCode' -ScriptBlock {
 
   code --install-extension formulahendry.code-runner --force *>&1 | Out-Null
   code --install-extension github.github-vscode-theme --force *>&1 | Out-Null
-  
+
   if ($InstallPython) {
     code --install-extension ms-python.python --force *>&1 | Out-Null
   }
