@@ -6,8 +6,8 @@ jobs:
     name: Test setup script
     runs-on: windows-latest
     strategy:
-      matrix:
-        arguments: ["", "-InstallPython"]
+#      matrix:
+#        arguments: ["", "-InstallPython"]
     steps:
       - name: Install Visual Studio Code
         shell: powershell
@@ -17,7 +17,8 @@ jobs:
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
-          echo $Env:PATH
-          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-            ${{ matrix.arguments }}
-          Write-Host $Error
+         choco list -lo
+ #         echo $Env:PATH
+ #         . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
+ #           ${{ matrix.arguments }}
+#          Write-Host $Error
