@@ -14,12 +14,14 @@ jobs:
         run: |
           Import-Module BitsTransfer
           $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=addtopath,!runcode"
+          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
 
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
+          Get-ChildItem -Force -LiteralPath "$Env:LocalAppData/Programs/Microsoft VS Code/bin"
+          $Env.Path += "$Env:LocalAppData/Programs/Microsoft VS Code/bin"
           echo $Env:PATH
 #          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
 #            ${{ matrix.arguments }}
