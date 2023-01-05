@@ -12,7 +12,7 @@ jobs:
           Import-Module BitsTransfer
           $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
           Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $pythonDownloadPath -ArgumentList "/verysilent", "/mergetasks=!runcode"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
 
       - name: Run setup-environment.ps1
         shell: powershell
@@ -30,7 +30,7 @@ jobs:
           Import-Module BitsTransfer
           $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
           Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $pythonDownloadPath -ArgumentList "/verysilent", "/mergetasks=!runcode"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
 
       - name: Run setup-environment.ps1 with --InstallPython flag
         shell: powershell
