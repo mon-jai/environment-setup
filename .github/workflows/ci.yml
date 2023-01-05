@@ -6,13 +6,7 @@ jobs:
     name: Test setup script
     runs-on: windows-latest
     steps:
-      - name: Install Visual Studio Code
-        shell: powershell
-        run: |
-          Import-Module BitsTransfer
-          $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
+      - uses: ./.github/workflows/install-vscode.yml
 
       - name: Run setup-environment.ps1
         shell: powershell
@@ -24,13 +18,7 @@ jobs:
     name: Test setup script with Python installation
     runs-on: windows-latest
     steps:
-      - name: Install Visual Studio Code
-        shell: powershell
-        run: |
-          Import-Module BitsTransfer
-          $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
+      - uses: ./.github/workflows/install-vscode.yml
 
       - name: Run setup-environment.ps1 with --InstallPython flag
         shell: powershell
