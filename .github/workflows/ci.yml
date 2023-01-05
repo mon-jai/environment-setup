@@ -9,22 +9,22 @@ jobs:
       matrix:
         arguments: ["", "-InstallPython"]
     steps:
-      - name: Install Visual Studio Code
+      - name: Download Visual Studio Code
         shell: powershell
         run: |
           Import-Module BitsTransfer
-          
+
           $VSCodeDownloadPath = "$Env:TEMP/vscode.zip"
           $VSCodePath = "$Env:UserProfile/vscode"
-          
+
           Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" $VSCodeDownloadPath
           Expand-Archive $VSCodeDownloadPath -DestinationPath $VSCodePath
-          
+
           "$VSCodePath/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-            ${{ matrix.arguments }}
+            ${{ matrix.arguments } }
           Write-Host $Error
