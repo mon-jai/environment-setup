@@ -12,8 +12,8 @@ Scripts for setting up a development environment in university's computers.
 <!-- https://stackoverflow.com/a/68777742 -->
 
 ```powershell
-. { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . [scriptblock]::Create(irm 'https://raw.githubusercontent.com/mon-jai/network-programming/main/setup-environment.ps1') `
-  [-InstallPython]
+. { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/network-programming/main/setup-environment.ps1')))`
+  [--InstallPython]
 ```
 
 ### Parameters
