@@ -9,8 +9,8 @@ jobs:
       - name: Run setup-environment.ps1
         shell: pwsh
         run: |
-          Write-Host New-WinUserLanguageList "en-US"
-          Write-Host New-WinUserLanguageList en-US
+          echo (New-WinUserLanguageList "en-US")
+          echo (New-WinUserLanguageList en-US)
   #         . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))
   #         Write-Host $Error
 
