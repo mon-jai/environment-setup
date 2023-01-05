@@ -5,24 +5,21 @@ jobs:
   test:
     name: Test setup script
     runs-on: windows-latest
+    strategy:
+      matrix:
+        arguments: ["", "-InstallPython"]
     steps:
-      - uses: ./.github/workflows/install-vscode.yml
-
-      - name: Run setup-environment.ps1
+      - name: Install Visual Studio Code
         shell: powershell
         run: |
-          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))
-          Write-Host $Error
-
-  test-python:
-    name: Test setup script with Python installation
-    runs-on: windows-latest
-    steps:
-      - uses: ./.github/workflows/install-vscode.yml
+          Import-Module BitsTransfer
+          $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
+          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode"
 
       - name: Run setup-environment.ps1 with --InstallPython flag
         shell: powershell
         run: |
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-            -InstallPython
+            ${{ matrix.arguments }
           Write-Host $Error
