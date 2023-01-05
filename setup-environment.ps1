@@ -8,7 +8,7 @@ Start-Job -Name 'Enable clipboard' -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
     # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-Null
+    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append setup-log.txt
 
     Write-Host "Enabled clipboard"
   }
@@ -43,8 +43,8 @@ Start-Job -Name 'Install Windows Terminal' -ScriptBlock {
   Start-BitsTransfer  $windowsTerminalDownloadURL $windowsTerminalDownloadPath
 
   try {
-    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-Null
-    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-Null
+    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append setup-log.txt
+    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append setup-log.txt
 
     Write-Host "Installed Windows Terminal"
   }
@@ -74,9 +74,9 @@ if ($InstallPython) {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-Null
-    python -m pip install --upgrade pip | Out-Null
-    pip install -U autopep8 | Out-Null
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append setup-log.txt
+    python -m pip install --upgrade pip | Out-File -Append setup-log.txt
+    pip install -U autopep8 | Out-File -Append setup-log.txt
 
     Write-Host "Installed and configured Python"
   }
@@ -112,14 +112,14 @@ Start-Job -Name 'Configure VSCode' -ScriptBlock {
   }
 
   # Throw an error if the directory already exists
-  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-Null
+  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append setup-log.txt
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  code --install-extension formulahendry.code-runner --force *>&1 | Out-Null
-  code --install-extension github.github-vscode-theme --force *>&1 | Out-Null
+  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append setup-log.txt
+  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append setup-log.txt
 
   if ($InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Out-Null
+    code --install-extension ms-python.python --force *>&1 | Out-File -Append setup-log.txt
   }
 
   Write-Host "Configured VSCode"
