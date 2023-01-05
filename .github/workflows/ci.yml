@@ -20,7 +20,7 @@ jobs:
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
-          echo $PATH
+          echo $Env:PATH
 #          . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
 #            ${{ matrix.arguments }}
 #          Write-Host $Error
