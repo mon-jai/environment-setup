@@ -25,7 +25,6 @@ jobs:
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
-          New-Item -Path $Env:TEMP -Name setup-log.txt -ItemType File
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
             ${{ matrix.arguments }}
           Get-Content "$Env:TEMP/setup-log.txt"

@@ -4,11 +4,16 @@ Param([switch]$InstallPython)
 
 Import-Module BitsTransfer
 
+$logFilename = "setup-log.txt"
+$logFilePath = "$Env:TEMP/$logFilename"
+
+New-Item -Path $Env:TEMP -Name $logFilename -ItemType File | Out-Null
+
 Start-Job -Name 'Enable clipboard' -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
     # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
+    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
 
     Write-Host "Enabled clipboard"
   }
@@ -43,8 +48,8 @@ Start-Job -Name 'Install Windows Terminal' -ScriptBlock {
   Start-BitsTransfer  $windowsTerminalDownloadURL $windowsTerminalDownloadPath
 
   try {
-    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
-    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
+    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
+    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
 
     Write-Host "Installed Windows Terminal"
   }
@@ -74,9 +79,9 @@ if ($InstallPython) {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append "$Env:TEMP/setup-log.txt"
-    python -m pip install --upgrade pip | Out-File -Append "$Env:TEMP/setup-log.txt"
-    pip install -U autopep8 | Out-File -Append "$Env:TEMP/setup-log.txt"
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append $logFilePath
+    python -m pip install --upgrade pip | Out-File -Append $logFilePath
+    pip install -U autopep8 | Out-File -Append $logFilePath
 
     Write-Host "Installed and configured Python"
   }
@@ -112,14 +117,14 @@ Start-Job -Name 'Configure VSCode' -ScriptBlock {
   }
 
   # Throw an error if the directory already exists
-  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
+  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append $logFilePath
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
-  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
+  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append $logFilePath
+  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append $logFilePath
 
   if ($InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Out-File -Append "$Env:TEMP/setup-log.txt"
+    code --install-extension ms-python.python --force *>&1 | Out-File -Append $logFilePath
   }
 
   Write-Host "Configured VSCode"
