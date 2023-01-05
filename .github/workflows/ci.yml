@@ -14,7 +14,9 @@ jobs:
         run: |
           choco install vscode
           refreshenv
-          code
+          Get-Content 'C:\Program Files\Microsoft VS Code\'
+          Get-Content 'C:\ProgramData\chocolatey\lib\vscode'
+          . 'C:\Program Files\Microsoft VS Code\bin\code'
 
       - name: Run setup-environment.ps1
         shell: powershell
