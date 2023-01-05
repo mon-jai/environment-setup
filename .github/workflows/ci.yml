@@ -15,7 +15,7 @@ jobs:
           Import-Module BitsTransfer
           $VSCodePath = "$Env:TEMP/VSCodeUserSetup-x64.exe"
           Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user" "$Env:TEMP/VSCodeUserSetup-x64.exe"
-          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=!runcode", "/addtopath"
+          Start-Process $VSCodePath -ArgumentList "/verysilent", "/mergetasks=addtopath,!runcode"
 
       - name: Run setup-environment.ps1
         shell: powershell
