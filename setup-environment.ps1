@@ -10,12 +10,15 @@ $logFilePath = "$Env:TEMP\setup-log.txt"
 New-Item -Path $logFilePath -ItemType File | Out-Null
 
 # https://stackoverflow.com/a/39191466/11077662
+# https://stackoverflow.com/a/68882127/11077662
 $add_custom_cmdlet = {
   function Write-Log {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
     Process {
-      $content | Out-File -Append -LiteralPath $Global:logFilePath
+      # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_scopes?view=powershell-7.3#scope-modifiers
+      # $content | Out-File -Append -LiteralPath $Global:logFilePath
+      Get-Variable -Scope global
     }
   }
 }
