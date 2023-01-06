@@ -8,6 +8,8 @@ $Env:logFilePath = ".\setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:logFilePath -ItemType File -Force | Out-Null
+Write-Host $Env:logFilePath
+Test-Path -Path $Env:logFilePath -PathType Leaf
 
 # https://stackoverflow.com/a/39191466/11077662
 # https://stackoverflow.com/a/68882127/11077662
