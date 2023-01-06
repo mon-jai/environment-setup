@@ -4,8 +4,7 @@ Param([switch]$InstallPython)
 
 Import-Module BitsTransfer
 
-$logFilename = "setup-log.txt"
-$logFilePath = "$Env:TEMP/$logFilename"
+$logFilePath = "$Env:TEMP\setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $logFilePath -ItemType File | Out-Null
@@ -14,7 +13,7 @@ function Out-Log {
   [CmdletBinding()]
   Param ([Parameter(ValueFromPipeline)] [string[]]$content)
   Process {
-    $content | Out-File -Append -LiteralPath $logFilePath
+    # $content | Out-File -Append -LiteralPath $logFilePath
   }
 }
 
