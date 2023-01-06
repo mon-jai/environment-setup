@@ -21,6 +21,15 @@ $add_custom_cmdlet = {
       $content | Out-File -Append -LiteralPath $Env:SetupLogFilePath
     }
   }
+
+  function Write-Host-And-Log-And-Log {
+    [CmdletBinding()]
+    Param ([Parameter(ValueFromPipeline)] [string[]]$content)
+    Process {
+      Write-Host $content;
+      Write-Log $content;
+    }
+  }
 }
 
 Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -ScriptBlock {
@@ -28,10 +37,10 @@ Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -Scr
     # https://stackoverflow.com/a/41476689
     New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Write-Log
 
-    Write-Host "Enabled clipboard"
+    Write-Host-And-Log "Enabled clipboard"
   }
   catch {
-    Write-Host "Enable clipboard skipped"
+    Write-Host-And-Log "Enable clipboard skipped"
   }
 }
 
@@ -47,7 +56,7 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
   $languageList[1].InputMethodTips.Add('0404:{531FDEBF-9B4C-4A43-A2AA-960E8FCDC732}{4BDF9F03-C7D3-11D4-B2AB-0080C882687E}')
   Set-WinUserLanguageList $languageList -Force
 
-  Write-Host "Configured language"
+  Write-Host-And-Log "Configured language"
 }
 
 Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
@@ -64,10 +73,10 @@ Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmd
     Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Write-Log
     Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Write-Log
 
-    Write-Host "Installed Windows Terminal"
+    Write-Host-And-Log "Installed Windows Terminal"
   }
   catch {
-    Write-Host "Install Windows Terminal skipped"
+    Write-Host-And-Log "Install Windows Terminal skipped"
   }
 }
 
@@ -96,7 +105,7 @@ if ($InstallPython) {
     python -m pip install --upgrade pip | Write-Log
     pip install -U autopep8 | Write-Log
 
-    Write-Host "Installed and configured Python"
+    Write-Host-And-Log "Installed and configured Python"
   }
 }
 
@@ -140,8 +149,8 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
     code --install-extension ms-python.python --force *>&1 | Write-Log
   }
 
-  Write-Host "Configured VSCode"
+  Write-Host-And-Log "Configured VSCode"
 }
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
-Write-Host "Done!"
+Write-Host-And-Log "Done!"
