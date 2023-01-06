@@ -32,7 +32,7 @@ Start-Job -Name 'Enable clipboard' -ErrorAction Stop -ScriptBlock {
   }
 }
 
-Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
+# Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
   # https://stackoverflow.com/a/51374938
   Set-Culture en-US
   Set-WinSystemLocale -SystemLocale en-US
@@ -45,9 +45,9 @@ Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
   Set-WinUserLanguageList $languageList -Force
 
   Write-Host "Configured language"
-}
+# }
 
-Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
+# Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
   $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
   $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
 
@@ -66,10 +66,10 @@ Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
   catch {
     Write-Host "Install Windows Terminal skipped"
   }
-}
+# }
 
 if ($InstallPython) {
-  Start-Job -Name 'Install and configure Python' -ErrorAction Stop -ScriptBlock {
+  # Start-Job -Name 'Install and configure Python' -ErrorAction Stop -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP/python.exe"
 
     # https://stackoverflow.com/a/73534796
@@ -94,10 +94,10 @@ if ($InstallPython) {
     pip install -U autopep8 | Out-Log
 
     Write-Host "Installed and configured Python"
-  }
+  # }
 }
 
-Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
+# Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
   Remove-Item "$Env:USERPROFILE/.vscode/extensions" -Force -Recurse -ErrorAction SilentlyContinue
@@ -138,7 +138,7 @@ Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
   # }
 
   Write-Host "Configured VSCode"
-}
+# }
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 Write-Host "Done!"
