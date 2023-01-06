@@ -4,12 +4,10 @@ Param([switch]$InstallPython)
 
 Import-Module BitsTransfer
 
-$Env:logFilePath = ".\setup-log.txt"
+$Env:SetupLogFilePath = "$Env:TEMP/setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-New-Item -Path $Env:logFilePath -ItemType File -Force | Out-Null
-Write-Host $Env:logFilePath
-Test-Path -Path $Env:logFilePath -PathType Leaf
+New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
 
 # https://stackoverflow.com/a/39191466/11077662
 # https://stackoverflow.com/a/68882127/11077662
@@ -18,8 +16,9 @@ $add_custom_cmdlet = {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
     Process {
-      # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_scopes?view=powershell-7.3#scope-modifiers
-      $content | Out-File -Append -LiteralPath $Env:logFilePath
+      # https://social.technet.microsoft.com/Forums/windowsserver/en-US/51ef5275-02f8-423c-b2c9-a822c982ecf0/variable-scope-within-a-startjob-initializationscript#9eea0a0c-6ff8-4c2b-b832-158a55f4f5db-isAnswer
+      # https://github.com/PowerShell/PowerShell/issues/4530
+      $content | Out-File -Append -LiteralPath $Env:SetupLogFilePath
     }
   }
 }

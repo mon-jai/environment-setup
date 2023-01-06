@@ -9,22 +9,22 @@ jobs:
       matrix:
         arguments: ["", "-InstallPython"]
     steps:
-      # - name: Download Visual Studio Code
-      #   shell: powershell
-      #   run: |
-      #     Import-Module BitsTransfer
+      - name: Download Visual Studio Code
+        shell: powershell
+        run: |
+          Import-Module BitsTransfer
 
-      #     $VSCodeDownloadPath = "$Env:TEMP/vscode.zip"
-      #     $VSCodePath = "$Env:UserProfile/vscode"
+          $VSCodeDownloadPath = "$Env:TEMP/vscode.zip"
+          $VSCodePath = "$Env:UserProfile/vscode"
 
-      #     Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" $VSCodeDownloadPath
-      #     Expand-Archive $VSCodeDownloadPath -DestinationPath $VSCodePath
+          Start-BitsTransfer "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive" $VSCodeDownloadPath
+          Expand-Archive $VSCodeDownloadPath -DestinationPath $VSCodePath
 
-      #     "$VSCodePath/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          "$VSCodePath/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Run setup-environment.ps1
         shell: powershell
         run: |
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/${{ github.sha }}/setup-environment.ps1')))`
             ${{ matrix.arguments }}
-          Get-Content -Path "$Env:TEMP/setup-log.txt"
+          Get-Content -Path $Env:SetupLogFilePath
