@@ -122,11 +122,11 @@ if ($InstallPython) {
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append $logFilePath
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append -LiteralPath $logFilePath
-  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append -LiteralPath $logFilePath
+  . { code --install-extension formulahendry.code-runner --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
+  . { code --install-extension github.github-vscode-theme --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
 
   if ($InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Out-File -Append -LiteralPath $logFilePath
+    . { code --install-extension ms-python.python --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
   }
 
   Write-Host "Configured VSCode"
