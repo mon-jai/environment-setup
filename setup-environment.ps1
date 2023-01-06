@@ -74,7 +74,7 @@ if ($InstallPython) {
 
     # https://stackoverflow.com/a/73534796
     if (
- (Invoke-RestMethod 'https://www.python.org/downloads/') -notmatch
+      (Invoke-RestMethod 'https://www.python.org/downloads/') -notmatch
       '\bhref="(?<url>.+?\.exe)"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)'
     ) { throw "Could not determine latest Python version and download URL" }
 
