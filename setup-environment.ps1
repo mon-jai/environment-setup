@@ -87,7 +87,7 @@ if ($InstallPython) {
 
     Write-Host "Installed and configured Python"
 #   }
-# }
+}
 
 # Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
   # https://stackoverflow.com/a/36705460
