@@ -15,7 +15,7 @@ Start-Job -Name 'Enable clipboard' -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
     # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
+    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
 
     Write-Host "Enabled clipboard"
   }
@@ -50,8 +50,8 @@ Start-Job -Name 'Install Windows Terminal' -ScriptBlock {
   Start-BitsTransfer  $windowsTerminalDownloadURL $windowsTerminalDownloadPath
 
   try {
-    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
-    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append $logFilePath
+    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
+    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
 
     Write-Host "Installed Windows Terminal"
   }
@@ -81,9 +81,9 @@ if ($InstallPython) {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append $logFilePath
-    python -m pip install --upgrade pip | Out-File -Append $logFilePath
-    pip install -U autopep8 | Out-File -Append $logFilePath
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append -LiteralPath $logFilePath
+    python -m pip install --upgrade pip | Out-File -Append -LiteralPath $logFilePath
+    pip install -U autopep8 | Out-File -Append -LiteralPath $logFilePath
 
     Write-Host "Installed and configured Python"
   }
@@ -122,11 +122,11 @@ Start-Job -Name 'Configure VSCode' -ScriptBlock {
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append $logFilePath
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append $logFilePath
-  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append $logFilePath
+  code --install-extension formulahendry.code-runner --force *>&1 | Out-File -Append -LiteralPath $logFilePath
+  code --install-extension github.github-vscode-theme --force *>&1 | Out-File -Append -LiteralPath $logFilePath
 
   if ($InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Out-File -Append $logFilePath
+    code --install-extension ms-python.python --force *>&1 | Out-File -Append -LiteralPath $logFilePath
   }
 
   Write-Host "Configured VSCode"
