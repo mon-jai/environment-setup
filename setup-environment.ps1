@@ -10,7 +10,7 @@ $logFilePath = "$Env:TEMP/$logFilename"
 $ErrorActionPreference = "Stop"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-New-Item -Path $Env:TEMP -Name $logFilename -ItemType File | Out-Null
+New-Item -Path $logFilePath -ItemType File | Out-Null
 
 function Out-Log {
   [CmdletBinding()]
