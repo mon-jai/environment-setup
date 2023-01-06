@@ -4,23 +4,20 @@ Param([switch]$InstallPython)
 
 Import-Module BitsTransfer
 
-$logFilePath = "$Env:TEMP\setup-log.txt"
+$Env:logFilePath = ".\setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-New-Item -Path $logFilePath -ItemType File | Out-Null
+New-Item -Path $Env:logFilePath -ItemType File -Force | Out-Null
 
 # https://stackoverflow.com/a/39191466/11077662
 # https://stackoverflow.com/a/68882127/11077662
 $add_custom_cmdlet = {
-  $logFilePath = $Using:logFilePath
-  Write-Host $logFilePath + "   A";
   function Write-Log {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
     Process {
       # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_scopes?view=powershell-7.3#scope-modifiers
-      # $content | Out-File -Append -LiteralPath $Global:logFilePath
-      Write-Host $logFilePath
+      $content | Out-File -Append -LiteralPath $Env:logFilePath
     }
   }
 }
