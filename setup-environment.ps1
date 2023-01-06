@@ -132,5 +132,5 @@ Start-Job -Name 'Configure VSCode' -ScriptBlock {
   Write-Host "Configured VSCode"
 }
 
-Get-Job | Receive-Job -Wait -ErrorAction Stop
+Get-Job | Receive-Job -Wait
 Write-Host "Done!"
