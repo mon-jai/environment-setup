@@ -22,7 +22,7 @@ $add_custom_cmdlet = {
     }
   }
 
-  function Write-Host-And-Log-And-Log {
+  function Write-Host-And-Log {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
     Process {
