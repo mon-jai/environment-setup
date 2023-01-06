@@ -27,4 +27,4 @@ jobs:
         run: |
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
             ${{ matrix.arguments }}
-          Get-Content "$Env:TEMP/setup-log.txt"
+          Get-Content -Path "$Env:TEMP/setup-log.txt"
