@@ -9,18 +9,21 @@ $logFilePath = "$Env:TEMP\setup-log.txt"
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $logFilePath -ItemType File | Out-Null
 
-function Out-Log {
-  [CmdletBinding()]
-  Param ([Parameter(ValueFromPipeline)] [string[]]$content)
-  Process {
-    $content | Out-File -Append -LiteralPath $logFilePath
+# https://stackoverflow.com/a/39191466/11077662
+$add_custom_cmdlet = {
+  function Write-Log {
+    [CmdletBinding()]
+    Param ([Parameter(ValueFromPipeline)] [string[]]$content)
+    Process {
+      $content | Out-File -Append -LiteralPath $logFilePath
+    }
   }
 }
 
-Start-Job -Name 'Enable clipboard' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-Log
+    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Write-Log
 
     Write-Host "Enabled clipboard"
   }
@@ -29,7 +32,7 @@ Start-Job -Name 'Enable clipboard' -ErrorAction Stop -ScriptBlock {
   }
 }
 
-Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/51374938
   Set-Culture en-US
   Set-WinSystemLocale -SystemLocale en-US
@@ -44,7 +47,7 @@ Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
   Write-Host "Configured language"
 }
 
-Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
   $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
 
@@ -55,8 +58,8 @@ Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
   Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
 
   try {
-    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-Log
-    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-Log
+    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Write-Log
+    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Write-Log
 
     Write-Host "Installed Windows Terminal"
   }
@@ -66,7 +69,7 @@ Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
 }
 
 if ($InstallPython) {
-  Start-Job -Name 'Install and configure Python' -ErrorAction Stop -ScriptBlock {
+  Start-Job -Name 'Install and configure Python' -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP/python.exe"
 
     # https://stackoverflow.com/a/73534796
@@ -86,15 +89,15 @@ if ($InstallPython) {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-Log
-    python -m pip install --upgrade pip | Out-Log
-    pip install -U autopep8 | Out-Log
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
+    python -m pip install --upgrade pip | Write-Log
+    pip install -U autopep8 | Write-Log
 
     Write-Host "Installed and configured Python"
   }
 }
 
-Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
   Remove-Item "$Env:USERPROFILE/.vscode/extensions" -Force -Recurse -ErrorAction SilentlyContinue
@@ -124,7 +127,7 @@ Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
   }
 
   # Throw an error if the directory already exists
-  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-Log
+  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
   code --install-extension formulahendry.code-runner --force *>&1 | Out-Null
