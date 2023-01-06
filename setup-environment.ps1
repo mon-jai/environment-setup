@@ -9,22 +9,30 @@ $logFilePath = "$Env:TEMP/$logFilename"
 
 $ErrorActionPreference = "Stop"
 
+# Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:TEMP -Name $logFilename -ItemType File | Out-Null
 
-# Start-Job -Name 'Enable clipboard' -ErrorAction Stop -ScriptBlock {
+function Out-Log {
+  [CmdletBinding()]
+  Param ([Parameter(ValueFromPipeline)] [string[]]$content)
+  Process {
+    $content | Out-File -Append -LiteralPath $logFilePath
+  }
+}
+
+Start-Job -Name 'Enable clipboard' -ErrorAction Stop -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
-    # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
+    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Out-Log
 
     Write-Host "Enabled clipboard"
   }
   catch {
     Write-Host "Enable clipboard skipped"
   }
-# }
+}
 
-# Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Configure language' -ErrorAction Stop -ScriptBlock {
   # https://stackoverflow.com/a/51374938
   Set-Culture en-US
   Set-WinSystemLocale -SystemLocale en-US
@@ -37,36 +45,36 @@ New-Item -Path $Env:TEMP -Name $logFilename -ItemType File | Out-Null
   Set-WinUserLanguageList $languageList -Force
 
   Write-Host "Configured language"
-# }
+}
 
-# Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Install Windows Terminal' -ErrorAction Stop -ScriptBlock {
   $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
   $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
 
   $windowsTerminalDownloadURL = "https://github.com/microsoft/terminal/releases/download/v1.15.3465.0/Microsoft.WindowsTerminal_Win10_1.15.3465.0_8wekyb3d8bbwe.msixbundle"
   $windowsTerminalDownloadPath = "$Env:TEMP/WindowsTerminal.msixbundle"
 
-  Start-BitsTransfer  $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
-  Start-BitsTransfer  $windowsTerminalDownloadURL $windowsTerminalDownloadPath
+  Start-BitsTransfer $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
+  Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
 
   try {
-    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
-    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-File -Append -LiteralPath $logFilePath
+    Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Out-Log
+    Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Out-Log
 
     Write-Host "Installed Windows Terminal"
   }
   catch {
     Write-Host "Install Windows Terminal skipped"
   }
-# }
+}
 
 if ($InstallPython) {
-#   Start-Job -Name 'Install and configure Python' -ErrorAction Stop -ScriptBlock {
+  Start-Job -Name 'Install and configure Python' -ErrorAction Stop -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP/python.exe"
 
     # https://stackoverflow.com/a/73534796
     if (
-    (Invoke-RestMethod 'https://www.python.org/downloads/') -notmatch
+ (Invoke-RestMethod 'https://www.python.org/downloads/') -notmatch
       '\bhref="(?<url>.+?\.exe)"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)'
     ) { throw "Could not determine latest Python version and download URL" }
 
@@ -81,15 +89,15 @@ if ($InstallPython) {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-File -Append -LiteralPath $logFilePath
-    python -m pip install --upgrade pip | Out-File -Append -LiteralPath $logFilePath
-    pip install -U autopep8 | Out-File -Append -LiteralPath $logFilePath
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Out-Log
+    python -m pip install --upgrade pip | Out-Log
+    pip install -U autopep8 | Out-Log
 
     Write-Host "Installed and configured Python"
-#   }
+  }
 }
 
-# Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
+Start-Job -Name 'Configure VSCode' -ErrorAction Stop -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
   Remove-Item "$Env:USERPROFILE/.vscode/extensions" -Force -Recurse -ErrorAction SilentlyContinue
@@ -122,12 +130,15 @@ if ($InstallPython) {
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Out-File -Append $logFilePath
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  . { code --install-extension formulahendry.code-runner --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
-  . { code --install-extension github.github-vscode-theme --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
+  code --install-extension formulahendry.code-runner --force *>&1 | Out-Null
+  code --install-extension github.github-vscode-theme --force *>&1 | Out-Null
 
   if ($InstallPython) {
-    . { code --install-extension ms-python.python --force } *>&1 | Out-File -Append -LiteralPath $logFilePath
+    code --install-extension ms-python.python --force *>&1 | Out-Null
   }
 
   Write-Host "Configured VSCode"
-# }
+}
+
+Get-Job | Receive-Job -Wait -ErrorAction Stop
+Write-Host "Done!"
