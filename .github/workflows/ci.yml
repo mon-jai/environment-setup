@@ -27,6 +27,4 @@ jobs:
         run: |
           . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/${{ github.sha }}/setup-environment.ps1')))`
             ${{ matrix.arguments }}
-          Write-Host "$Env:TEMP/setup-log.txt"
-          Test-Path -Path "$Env:TEMP/setup-log.txt" -PathType Leaf
           Get-Content -Path "$Env:TEMP/setup-log.txt"
