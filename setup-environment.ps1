@@ -130,11 +130,11 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
-  code --install-extension formulahendry.code-runner --force *>&1 | Out-Null
-  code --install-extension github.github-vscode-theme --force *>&1 | Out-Null
+  code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
+  code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
 
   if ($InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Out-Null
+    code --install-extension ms-python.python --force *>&1 | Write-Log
   }
 
   Write-Host "Configured VSCode"
