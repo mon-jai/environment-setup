@@ -29,4 +29,4 @@ jobs:
             ${{ matrix.arguments }}
           Write-Host "$Env:TEMP/setup-log.txt"
           Test-Path -Path "$Env:TEMP/setup-log.txt" -PathType Leaf
-          Write-Content -Path "$Env:TEMP/setup-log.txt"
+          Get-Content -Path "$Env:TEMP/setup-log.txt"
