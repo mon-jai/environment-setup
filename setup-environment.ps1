@@ -15,7 +15,7 @@ $add_custom_cmdlet = {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
     Process {
-      $content | Out-File -Append -LiteralPath $logFilePath
+      $content | Out-File -Append -LiteralPath $Using:logFilePath
     }
   }
 }
