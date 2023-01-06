@@ -7,7 +7,7 @@ Import-Module BitsTransfer
 $logFilename = "setup-log.txt"
 $logFilePath = "$Env:TEMP/$logFilename"
 
-New-Item -Path $Env:TEMP -Name $logFilename -ItemType File | Out-Null
+New-Item -Path $Env:TEMP -Name $logFilename -ItemType File
 
 Start-Job -Name 'Enable clipboard' -ScriptBlock {
   try {
