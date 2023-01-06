@@ -9,6 +9,10 @@ $logFilePath = "$Env:TEMP/$logFilename"
 
 New-Item -Path $Env:TEMP -Name $logFilename -ItemType File
 
+Write-Host $logFilePath
+
+Get-Content -Path $logFilePath
+
 Start-Job -Name 'Enable clipboard' -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
