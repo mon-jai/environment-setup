@@ -32,4 +32,4 @@ jobs:
 
       - name: Show setup logs
         run: |
-          Get-Content -Path ${{ env:SetupLogFilePath }}
+          Get-Content -Path ${{ env.SetupLogFilePath }}
