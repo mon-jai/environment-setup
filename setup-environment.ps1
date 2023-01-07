@@ -123,7 +123,7 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
     "code-runner.clearPreviousOutput"  = $true
     "code-runner.executorMap"          = [pscustomobject]@{
       # https://stackoverflow.com/a/53961913
-      "python" = "clear; & `"`$env:LocalAppData\Programs\Python\Python311\python`" -u"
+      "python" = "clear; & `"`$Env:LocalAppData\Programs\Python\Python311\python`" -u"
     }
     "code-runner.ignoreSelection"      = $true
     "code-runner.runInTerminal"        = $true
