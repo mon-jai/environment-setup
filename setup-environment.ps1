@@ -4,7 +4,8 @@ Param([switch]$InstallPython)
 
 Import-Module BitsTransfer
 
-$Env:SetupLogFilePath = "$Env:TEMP/setup-log.txt"
+# https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
+$Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
