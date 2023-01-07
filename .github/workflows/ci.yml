@@ -28,7 +28,7 @@ jobs:
           #   . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/${{ github.sha }}/setup-environment.ps1')))`
           #     ${{ matrix.arguments }}
           # https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/#examples
-          echo $GITHUB_ENV
+          $Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
           Write-Host "SetupLogFilePath=$Env:SetupLogFilePath" >> $GITHUB_ENV
 
       - name: Show setup logs
