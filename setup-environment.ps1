@@ -145,11 +145,8 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
 
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
-  
-  Write-Host $Using:InstallPython
 
   if ($InstallPython) {
-    Write-Host "`$Using:InstallPython = $Using:InstallPython"
     code --install-extension ms-python.python --force *>&1 | Write-Log
   }
 
