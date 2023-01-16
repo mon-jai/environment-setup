@@ -153,7 +153,7 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
   Write-Host-And-Log "Configured VSCode"
 }
 
-Get-Job | Receive-Job -Wait -ErrorAction Stop | Out-Null
+Get-Job | Wait-Job -ErrorAction Stop
 
 . $add_custom_cmdlet
 Write-Host-And-Log "Done!"
