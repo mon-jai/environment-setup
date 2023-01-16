@@ -10,8 +10,8 @@ $Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
 
-# https://stackoverflow.com/a/39191466/11077662
-# https://stackoverflow.com/a/68882127/11077662
+# https://stackoverflow.com/a/39191466
+# https://stackoverflow.com/a/68882127
 $add_custom_cmdlet = {
   function Write-Log {
     [CmdletBinding()]
