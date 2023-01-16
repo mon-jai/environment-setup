@@ -45,7 +45,7 @@ Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -Scr
   catch {
     Write-Host-And-Log "Enable clipboard skipped"
   }
-} | Write-Host-And-Log # https://stackoverflow.com/a/58809009/11077662
+} | Out-Null # https://stackoverflow.com/a/58809009/11077662
 
 Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/51374938
@@ -60,7 +60,7 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
   Set-WinUserLanguageList $languageList -Force
 
   Write-Host-And-Log "Configured language"
-} | Write-Host-And-Log
+} | Out-Null
 
 Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
@@ -81,7 +81,7 @@ Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmd
   catch {
     Write-Host-And-Log "Install Windows Terminal skipped"
   }
-} | Write-Host-And-Log
+} | Out-Null
 
 if ($InstallPython) {
   Start-Job -Name 'Install and configure Python' -InitializationScript $add_custom_cmdlet -ScriptBlock {
@@ -109,7 +109,7 @@ if ($InstallPython) {
     pip install -U autopep8 | Write-Log
 
     Write-Host-And-Log "Installed and configured Python"
-  } | Write-Host-And-Log
+  } | Out-Null
 }
 
 Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -ScriptBlock {
@@ -153,7 +153,7 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
   }
 
   Write-Host-And-Log "Configured VSCode"
-} | Write-Host-And-Log
+} | Out-Null
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 
