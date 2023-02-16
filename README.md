@@ -5,7 +5,7 @@ Scripts for setting up a development environment in university's computers.
 ## Installation
 
 > **Note**\
-> Also set an environment variable named `SetupLogFilePath`, containing the path to the log file.
+> Also set an environment variable named `SetupLogFilePath`, containing the path to log file.
 
 ### Syntax
 
