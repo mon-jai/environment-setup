@@ -71,8 +71,6 @@ Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custo
   Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
 
-  Stop-Process -Name explorer
-
   Write-Host-And-Log "Unpinned other apps from taskbar"
 } | Out-Null
 
