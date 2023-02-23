@@ -63,14 +63,14 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
 } | Out-Null
 
 Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  # https://stackoverflow.com/a/25041670
+  # https://stackoverflow.com/a/25041670, https://stackoverflow.com/a/72140921
   # https://stackoverflow.com/a/39034632
-  (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | 
-  Where-Object { $_.Name -notmatch "^檔案總管$|^Google Chrome$" } | 
-  ForEach-Object { $_.Verbs() } | 
-  Where-Object { $_.Name -match '&K' } | 
+  (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
+  Where-Object { @("檔案總管", "Google Chrome") -contains $_.Name } |
+  ForEach-Object { $_.Verbs() } |
+  Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
-  
+
   Write-Host-And-Log "Unpinned other apps from taskbar"
 } | Out-Null
 
