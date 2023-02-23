@@ -71,6 +71,8 @@ Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custo
   Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
 
+  Stop-Process -Name explorer
+
   Write-Host-And-Log "Unpinned other apps from taskbar"
 } | Out-Null
 
@@ -169,4 +171,5 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
 } | Out-Null
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
+
 Write-Host "Done!"
