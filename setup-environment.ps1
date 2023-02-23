@@ -67,7 +67,7 @@ Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custo
   # https://stackoverflow.com/a/39034632
   (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | 
   Where-Object { $_.Name -notmatch "^檔案總管$|^Google Chrome$" } | 
-  Select-Object { $_.Verbs() } | 
+  ForEach-Object { $_.Verbs() } | 
   Where-Object { $_.Name -match '&K' } | 
   ForEach-Object { $_.DoIt() }
   
@@ -155,6 +155,7 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
 
   # Throw an error if the directory already exists
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
+
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
@@ -167,8 +168,5 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
   Write-Host-And-Log "Configured VSCode"
 } | Out-Null
 
-
-
 Get-Job | Receive-Job -Wait -ErrorAction Stop
-
 Write-Host "Done!"
