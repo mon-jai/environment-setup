@@ -66,7 +66,7 @@ Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custo
   # https://stackoverflow.com/a/25041670, https://stackoverflow.com/a/72140921
   # https://stackoverflow.com/a/39034632
   (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
-  Where-Object { @("檔案總管", "Google Chrome") -contains $_.Name } |
+  Where-Object { $_.Name -notin @("檔案總管", "Google Chrome") } |
   ForEach-Object { $_.Verbs() } |
   Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
