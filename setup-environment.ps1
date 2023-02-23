@@ -5,7 +5,7 @@ Param([switch]$InstallPython)
 Import-Module BitsTransfer
 
 # https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
-$Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
+$Env:SetupLogFilePath =Join-Path $Env:TEMP -ChildPath "setup-log.txt"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
@@ -60,6 +60,17 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
   Set-WinUserLanguageList $languageList -Force
 
   Write-Host-And-Log "Configured language"
+} | Out-Null
+
+Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+# https://stackoverflow.com/a/25041670
+((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | 
+  Where-Object{$_.Name -notmatch "^檔案總管$|^Google Chrome$"}).Verbs() | 
+  Where-Object{$_.Name -match '&K'} | 
+  ForEach-Object{$_.DoIt(); $exec = $true}
+  
+    Write-Host-And-Log "Unpinned other apps from taskbar"
+
 } | Out-Null
 
 Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
@@ -154,6 +165,8 @@ Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -Scr
 
   Write-Host-And-Log "Configured VSCode"
 } | Out-Null
+
+
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 
