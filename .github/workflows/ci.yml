@@ -5,6 +5,9 @@ jobs:
   test:
     name: Test setup script
     runs-on: windows-latest
+    concurrency:
+      group: test-ci
+      cancel-in-progress: true
     strategy:
       matrix:
         arguments: ["", "-InstallPython"]
