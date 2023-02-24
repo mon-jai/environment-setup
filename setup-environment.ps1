@@ -63,12 +63,9 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
 } | Out-Null
 
 Start-Job -Name 'Configure taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  # https://stackoverflow.com/a/25041670, https://stackoverflow.com/a/72140921
-  # https://stackoverflow.com/a/39034632
-  (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
-  ForEach-Object { $_.Verbs() } |
-  Where-Object { $_.Name -match '&K' } |
-  ForEach-Object { $_.DoIt() }
+  Remove-Item "%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
+  Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
+  Stop-Process -Name explorer
 
   $pttbPath = "$Env:TEMP/pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
