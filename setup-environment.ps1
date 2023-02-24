@@ -69,7 +69,7 @@ Start-Job -Name 'Configure taskbar' -InitializationScript $add_custom_cmdlet -Sc
   ForEach-Object { $_.Verbs() } |
   Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
-  
+
   $pttbPath = "$Env:TEMP/pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
   & $pttbPath "C:\Windows\explorer.exe"
