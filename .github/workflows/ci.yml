@@ -6,7 +6,7 @@ jobs:
     name: Test setup script
     runs-on: windows-latest
     concurrency:
-      group: ${{ toJSON(matrix) }}
+      group: ${{ toJSON(matrix.arguments) }}
       cancel-in-progress: true
     strategy:
       matrix:
