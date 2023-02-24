@@ -35,10 +35,10 @@ $add_custom_cmdlet = {
 
 . $add_custom_cmdlet
 
-Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Enable clipboard" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   try {
     # https://stackoverflow.com/a/41476689
-    New-ItemProperty -path 'HKCU:\Software\Microsoft\Clipboard' -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Write-Log
+    New-ItemProperty -path "HKCU:\Software\Microsoft\Clipboard" -name EnableClipboardHistory -propertyType DWord -value 1 -force -ErrorAction Stop *>&1 | Write-Log
 
     Write-Host-And-Log "Enabled clipboard"
   }
@@ -47,22 +47,22 @@ Start-Job -Name 'Enable clipboard' -InitializationScript $add_custom_cmdlet -Scr
   }
 } | Out-Null # https://stackoverflow.com/a/58809009/11077662
 
-Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Configure language" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/51374938
   Set-Culture en-US
   Set-WinSystemLocale -SystemLocale en-US
   Set-WinUILanguageOverride -Language en-US
 
   $languageList = New-WinUserLanguageList en-US
-  $languageList.Add('zh-Hant-TW')
+  $languageList.Add("zh-Hant-TW")
   $languageList[1].InputMethodTips.Clear()
-  $languageList[1].InputMethodTips.Add('0404:{531FDEBF-9B4C-4A43-A2AA-960E8FCDC732}{4BDF9F03-C7D3-11D4-B2AB-0080C882687E}')
+  $languageList[1].InputMethodTips.Add("0404:{531FDEBF-9B4C-4A43-A2AA-960E8FCDC732}{4BDF9F03-C7D3-11D4-B2AB-0080C882687E}")
   Set-WinUserLanguageList $languageList -Force
 
   Write-Host-And-Log "Configured language"
 } | Out-Null
 
-Start-Job -Name 'Configure taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   Remove-Item "%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
@@ -76,7 +76,7 @@ Start-Job -Name 'Configure taskbar' -InitializationScript $add_custom_cmdlet -Sc
   Write-Host-And-Log "Configured taskbar"
 } | Out-Null
 
-Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
   $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
 
@@ -98,13 +98,13 @@ Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmd
 } | Out-Null
 
 if ($InstallPython) {
-  Start-Job -Name 'Install and configure Python' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+  Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP/python.exe"
 
     # https://stackoverflow.com/a/73534796
     if (
-      (Invoke-RestMethod 'https://www.python.org/downloads/') -notmatch
-      '\bhref="(?<url>.+?\.exe)"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)'
+      (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
+      "\bhref=`"(?<url>.+?\.exe)`"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)"
     ) { throw "Could not determine latest Python version and download URL" }
 
     # https://stackoverflow.com/a/21423159
@@ -126,7 +126,7 @@ if ($InstallPython) {
   } | Out-Null
 }
 
-Start-Job -Name 'Configure VSCode' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
   Remove-Item "$Env:USERPROFILE/.vscode/extensions" -Force -Recurse -ErrorAction SilentlyContinue
