@@ -164,7 +164,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
 
   if ($Using:InstallPython) {
-    code --install-extension ms-python.python --force *>&1 | Write-Host-And-Log
+    code --install-extension ms-python.python --force *>&1 | Write-Log
   }
 
   Write-Host-And-Log "Configured VSCode"
