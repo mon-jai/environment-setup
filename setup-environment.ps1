@@ -62,16 +62,21 @@ Start-Job -Name 'Configure language' -InitializationScript $add_custom_cmdlet -S
   Write-Host-And-Log "Configured language"
 } | Out-Null
 
-Start-Job -Name 'Unpin other apps from taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name 'Configure taskbar' -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/25041670, https://stackoverflow.com/a/72140921
   # https://stackoverflow.com/a/39034632
   (New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() |
-  Where-Object { $_.Name -notin @("檔案總管", "Google Chrome") } |
   ForEach-Object { $_.Verbs() } |
   Where-Object { $_.Name -match '&K' } |
   ForEach-Object { $_.DoIt() }
+  
+  $pttbPath = "$Env:TEMP/pttb.exe"
+  Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
+  & $pttbPath "C:\Windows\explorer.exe"
+  & $pttbPath "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+  & $pttbPath "$Env:LocalAppData\Programs\Microsoft VS Code\Code.exe"
 
-  Write-Host-And-Log "Unpinned other apps from taskbar"
+  Write-Host-And-Log "Configured taskbar"
 } | Out-Null
 
 Start-Job -Name 'Install Windows Terminal' -InitializationScript $add_custom_cmdlet -ScriptBlock {
