@@ -63,7 +63,7 @@ Start-Job -Name "Configure language" -InitializationScript $add_custom_cmdlet -S
 } | Out-Null
 
 Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  Remove-Item "%AppData%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
+  Remove-Item "$Env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
 
