@@ -80,7 +80,9 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
   try {
     # https://stackoverflow.com/a/7330368
     # https://github.com/microsoft/terminal#installing-and-running-windows-terminal
-    if ([System.Environment]::OSVersion.Version.build -lt 19041) throw "PC does not meet minimum system requirements"
+    if ([System.Environment]::OSVersion.Version.build -lt 19041) {
+      throw "PC does not meet minimum system requirements"
+    }
 
     $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
     $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
