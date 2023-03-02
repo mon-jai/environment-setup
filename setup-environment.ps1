@@ -77,16 +77,20 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
 } | Out-Null
 
 Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
-  $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
-
-  $windowsTerminalDownloadURL = "https://github.com/microsoft/terminal/releases/download/v1.15.3465.0/Microsoft.WindowsTerminal_Win10_1.15.3465.0_8wekyb3d8bbwe.msixbundle"
-  $windowsTerminalDownloadPath = "$Env:TEMP/WindowsTerminal.msixbundle"
-
-  Start-BitsTransfer $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
-  Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
-
   try {
+    # https://stackoverflow.com/a/7330368
+    # https://github.com/microsoft/terminal#installing-and-running-windows-terminal
+    if ([System.Environment]::OSVersion.Version.build < 19041) throw "PC does not meet minimum system requirements"
+
+    $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
+    $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
+
+    $windowsTerminalDownloadURL = "https://github.com/microsoft/terminal/releases/download/v1.15.3465.0/Microsoft.WindowsTerminal_Win10_1.15.3465.0_8wekyb3d8bbwe.msixbundle"
+    $windowsTerminalDownloadPath = "$Env:TEMP/WindowsTerminal.msixbundle"
+
+    Start-BitsTransfer $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
+    Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
+
     Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Write-Log
     Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Write-Log
 
