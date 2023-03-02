@@ -67,11 +67,12 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
 
-  $pttbPath = "$Env:TEMP/pttb.exe"
+  $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
   & $pttbPath "C:\Windows\explorer.exe"
   & $pttbPath "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
   & $pttbPath "$Env:LocalAppData\Programs\Microsoft VS Code\Code.exe"
+  & $pttbPath "$Env:windir\system32\SnippingTool.exe"
 
   Write-Host-And-Log "Configured taskbar"
 } | Out-Null
@@ -85,10 +86,10 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
     }
 
     $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
-    $desktopFrameworkPackageDownloadPath = "$Env:TEMP/VCLibs.appx"
+    $desktopFrameworkPackageDownloadPath = "$Env:TEMP\VCLibs.appx"
 
     $windowsTerminalDownloadURL = "https://github.com/microsoft/terminal/releases/download/v1.15.3465.0/Microsoft.WindowsTerminal_Win10_1.15.3465.0_8wekyb3d8bbwe.msixbundle"
-    $windowsTerminalDownloadPath = "$Env:TEMP/WindowsTerminal.msixbundle"
+    $windowsTerminalDownloadPath = "$Env:TEMP\WindowsTerminal.msixbundle"
 
     Start-BitsTransfer $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
     Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
@@ -105,7 +106,7 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 
 if ($InstallPython) {
   Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-    $pythonDownloadPath = "$Env:TEMP/python.exe"
+    $pythonDownloadPath = "$Env:TEMP\python.exe"
 
     # https://stackoverflow.com/a/73534796
     if (
@@ -135,7 +136,7 @@ if ($InstallPython) {
 Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
-  Remove-Item "$Env:USERPROFILE/.vscode/extensions" -Force -Recurse -ErrorAction SilentlyContinue
+  Remove-Item "$Env:USERPROFILE\.vscode\extensions" -Force -Recurse -ErrorAction SilentlyContinue
 
   $vscodeSettingsDir = "$Env:APPDATA\Code\User\"
   $vscodeSettings = [pscustomobject]@{
