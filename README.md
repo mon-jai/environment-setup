@@ -25,9 +25,25 @@ Scripts for setting up a development environment in university's computers.
 
 Install Python and related tooling.
 
-## Cleanup
 
-### Delete Chrome profile data
+## MISC
+
+### Enable Internet Connection Sharing
+
+(run with administrative privileges)
+
+```powershell
+# https://superuser.com/a/649183
+regsvr32 hnetcfg.dll
+$HNetShare = New-Object -ComObject HNetCfg.HNetShare
+$connection = $m.EnumEveryConnection |? { $m.NetConnectionProps.Invoke($_).Name -eq "乙太網路" }
+$config = $HNetShare.INetSharingConfigurationForINetConnection.Invoke($connection)
+$config.EnableSharing(0)
+```
+
+### Cleanup
+
+Delete Chrome profile data
 
 ```powershell
 Remove-Item "$Env:LOCALAPPDATA\Google\Chrome\User Data\" -Force -Recurse
