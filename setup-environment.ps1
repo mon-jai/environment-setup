@@ -66,7 +66,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   Remove-Item "$Env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
-  
+
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
   $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
