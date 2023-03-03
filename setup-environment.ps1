@@ -66,11 +66,17 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   Remove-Item "$Env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
+  
+  $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
+  $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
+  $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+  $chromeShortcut.Arguments = "--profile-directory=`"Profile 1`""
+  $chromeShortcut.Save()
 
   $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
   & $pttbPath "C:\Windows\explorer.exe"
-  & $pttbPath "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+  & $pttbPath $chromeShortcutPath
   & $pttbPath "$Env:LocalAppData\Programs\Microsoft VS Code\Code.exe"
   & $pttbPath "$Env:windir\system32\SnippingTool.exe"
 
