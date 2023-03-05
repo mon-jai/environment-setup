@@ -69,6 +69,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   # https://blog.idera.com/database-tools/waiting-for-process-launch
   while ((Get-Process explorer -ErrorAction SilentlyContinue).count -eq 0) { Start-Sleep 1 }
 
+  # https://stackoverflow.com/a/9701907/11077662
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
   $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
