@@ -67,7 +67,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
   # https://blog.idera.com/database-tools/waiting-for-process-launch
-  while ((Get-Process explorer -ErrorAction SilentlyContinue).count = = 0) { Start-Sleep 1 }
+  while ((Get-Process explorer -ErrorAction SilentlyContinue).count -eq 0) { Start-Sleep 1 }
 
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
@@ -112,35 +112,6 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
   }
 } | Out-Null
 
-if ($InstallPython) {
-  Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-    $pythonDownloadPath = "$Env:TEMP\python.exe"
-
-    # https://stackoverflow.com/a/73534796
-    if (
-      (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
-      "\bhref=`"(?<url>.+?\.exe)`"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)"
-    ) { throw "Could not determine latest Python version and download URL" }
-
-    # https://stackoverflow.com/a/21423159
-    Start-BitsTransfer $Matches.url $pythonDownloadPath
-
-    # https://stackoverflow.com/a/73665900
-    Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
-    Remove-Item $pythonDownloadPath
-
-    # Reload PATH to run python and pip, https://stackoverflow.com/a/31845512
-    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-
-    # https://stackoverflow.com/a/67796873
-    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
-    python -m pip install --upgrade pip | Write-Log
-    pip install -U autopep8 | Write-Log
-
-    Write-Host-And-Log "Installed and configured Python"
-  } | Out-Null
-}
-
 Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
@@ -184,6 +155,35 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   Write-Host-And-Log "Configured VSCode"
 } | Out-Null
+
+if ($InstallPython) {
+  Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
+    $pythonDownloadPath = "$Env:TEMP\python.exe"
+
+    # https://stackoverflow.com/a/73534796
+    if (
+      (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
+      "\bhref=`"(?<url>.+?\.exe)`"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)"
+    ) { throw "Could not determine latest Python version and download URL" }
+
+    # https://stackoverflow.com/a/21423159
+    Start-BitsTransfer $Matches.url $pythonDownloadPath
+
+    # https://stackoverflow.com/a/73665900
+    Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
+    Remove-Item $pythonDownloadPath
+
+    # Reload PATH to run python and pip, https://stackoverflow.com/a/31845512
+    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+
+    # https://stackoverflow.com/a/67796873
+    pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
+    python -m pip install --upgrade pip | Write-Log
+    pip install -U autopep8 | Write-Log
+
+    Write-Host-And-Log "Installed and configured Python"
+  } | Out-Null
+}
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 
