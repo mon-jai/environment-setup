@@ -66,6 +66,8 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   Remove-Item "$Env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
   Stop-Process -Name explorer
+  # https://blog.idera.com/database-tools/waiting-for-process-launch
+  while ((Get-Process explorer -ErrorAction SilentlyContinue).count = = 0) { Start-Sleep 1 }
 
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
