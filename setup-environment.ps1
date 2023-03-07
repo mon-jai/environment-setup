@@ -65,9 +65,12 @@ Start-Job -Name "Configure language" -InitializationScript $add_custom_cmdlet -S
 Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   Remove-Item "$Env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\" -Force -Recurse -ErrorAction SilentlyContinue
   Remove-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" -Force -Recurse
+
   Stop-Process -Name explorer
-  # https://blog.idera.com/database-tools/waiting-for-process-launch
-  while ((Get-Process explorer -ErrorAction SilentlyContinue).count -eq 0) { Start-Sleep 1 }
+  # Wait for Windows Explorer to start by launching a Explorer window and wait for return
+  Start-Process explorer -Wait
+  # https://stackoverflow.com/a/60214941
+  (New-Object -ComObject Shell.Application).Windows() | Where-Object{ $_.FullName -eq "C:\Windows\explorer.exe" } | ForEach-Object{ $_.Quit() }
 
   # https://stackoverflow.com/a/9701907/11077662
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
