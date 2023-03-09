@@ -151,6 +151,14 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
+  $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
+  $firaCodePath = "$Env:TEMP\Fira_Code/"
+  $firaCodeFilename = "FiraCode-VF.ttf"
+
+  Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
+  Expand-Archive $firaCodeArchivePath $firaCodePath
+  Copy-Item -Path "$firaCodePath/variable_ttf/FiraCode-VF.ttf" -Destination "$Env:windir\Fonts\" -Force
+
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
 
