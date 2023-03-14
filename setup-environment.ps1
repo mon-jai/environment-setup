@@ -75,8 +75,9 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   # https://stackoverflow.com/a/9701907/11077662
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
-  $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
   $chromeShortcut.Arguments = "--profile-directory=`"Profile 1`""
+  $chromeShortcut.IconLocation = "$Env:LocalAppData\Google\Chrome\User Data\Profile 1\Google Profile.ico"
+  $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
   $chromeShortcut.WorkingDirectory = "C:\Program Files (x86)\Google\Chrome\Application"
   $chromeShortcut.Save()
 
