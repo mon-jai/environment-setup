@@ -154,13 +154,18 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code/"
-  $firaCodeFilename = "FiraCode-VF.ttf"
 
   Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
   Expand-Archive $firaCodeArchivePath $firaCodePath
-  # https://gist.github.com/anthonyeden/0088b07de8951403a643a8485af2709b
-  (New-Object -ComObject Shell.Application).Namespace(0x14).CopyHere("$firaCodePath/variable_ttf/FiraCode-VF.ttf",0x10)
-  New-ItemProperty -Name "Fira Code" -Path "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Fonts" -PropertyType string -Value $firaCodeFilename -Force -ErrorAction SilentlyContinue | Out-Null  
+  # https://stackoverflow.com/a/67903796
+  $signature = @'
+  [DllImport("gdi32.dll")]
+   public static extern int AddFontResource(string lpszFilename);
+  '@
+  $type = Add-Type -MemberDefinition $signature `
+      -Name FontUtils -Namespace AddFontResource `
+      -Using System.Text -PassThru
+  $type::AddFontResource("$firaCodePath/variable_ttf/FiraCode-VF.ttf")
 
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
