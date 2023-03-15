@@ -45,7 +45,7 @@ Start-Job -Name "Enable clipboard" -InitializationScript $add_custom_cmdlet -Scr
   catch {
     Write-Host-And-Log "Enable clipboard skipped"
   }
-} | Out-Null # https://stackoverflow.com/a/58809009/11077662
+} | Out-Null # https://stackoverflow.com/a/58809009
 
 Start-Job -Name "Configure language" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   # https://stackoverflow.com/a/51374938
@@ -72,7 +72,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   # https://stackoverflow.com/a/60214941
   (New-Object -ComObject Shell.Application).Windows() | Where-Object { $_.FullName -eq "C:\Windows\explorer.exe" } | ForEach-Object { $_.Quit() }
 
-  # https://stackoverflow.com/a/9701907/11077662
+  # https://stackoverflow.com/a/9701907
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
   $chromeShortcut.Arguments = "--profile-directory=`"Profile 1`""
