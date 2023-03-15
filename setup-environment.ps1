@@ -125,37 +125,34 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   $vscodeSettingsDir = "$Env:APPDATA\Code\User\"
   $vscodeSettings = [pscustomobject]@{
-    "[python]"                               = [pscustomobject]@{
+    "[python]"                         = [pscustomobject]@{
       "editor.tabSize" = 4
     }
-    "code-runner.clearPreviousOutput"        = $true
-    "code-runner.executorMap"                = [pscustomobject]@{
+    "code-runner.clearPreviousOutput"  = $true
+    "code-runner.executorMap"          = [pscustomobject]@{
       # https://stackoverflow.com/a/53961913
       "python" = "clear; & `"`$Env:LocalAppData\Programs\Python\Python311\python`" -u"
     }
-    "code-runner.ignoreSelection"            = $true
-    "code-runner.runInTerminal"              = $true
-    "code-runner.saveFileBeforeRun"          = $true
-    "editor.bracketPairColorization.enabled" = $true
-    "editor.cursorBlinking"                  = "smooth"
-    "editor.fontFamily"                      = "Fira Code, Consolas, 'Courier New', monospace"
-    "editor.fontLigatures"                   = "'ss01', 'ss03', 'cv10'"
-    "editor.formatOnPaste"                   = $true
-    "editor.formatOnType"                    = $true
-    "editor.guides.bracketPairs"             = $true
-    "editor.largeFileOptimizations"          = $false
-    "editor.lineHeight"                      = 1.6
-    "editor.maxTokenizationLineLength"       = 1e21
-    "editor.renderWhitespace"                = "trailing"
-    "editor.stickyScroll.enabled"            = $true
-    "explorer.confirmDelete"                 = $false
-    "files.associations"                     = [pscustomobject]@{
+    "code-runner.ignoreSelection"      = $true
+    "code-runner.runInTerminal"        = $true
+    "code-runner.saveFileBeforeRun"    = $true
+    "editor.cursorBlinking"            = "smooth"
+    "editor.fontFamily"                = "Fira Code, Consolas, 'Courier New', monospace"
+    "editor.fontLigatures"             = "'ss01', 'ss03', 'cv10'"
+    "editor.formatOnPaste"             = $true
+    "editor.formatOnType"              = $true
+    "editor.guides.bracketPairs"       = $true
+    "editor.lineHeight"                = 1.6
+    "editor.renderWhitespace"          = "trailing"
+    "editor.stickyScroll.enabled"      = $true
+    "explorer.confirmDelete"           = $false
+    "files.associations"               = [pscustomobject]@{
       "*.xml" = "html"
     }
-    "http.proxyStrictSSL"                    = $false
-    "python.analysis.typeCheckingMode"       = "strict"
-    "workbench.colorTheme"                   = "GitHub Light Default"
-    "workbench.startupEditor"                = "none"
+    "http.proxyStrictSSL"              = $false
+    "python.analysis.typeCheckingMode" = "strict"
+    "workbench.colorTheme"             = "GitHub Light Default"
+    "workbench.startupEditor"          = "none"
   }
 
   # Throw an error if the directory already exists
