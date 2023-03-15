@@ -101,7 +101,6 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 
     $desktopFrameworkPackageDownloadURL = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
     $desktopFrameworkPackageDownloadPath = "$Env:TEMP\VCLibs.appx"
-
     $windowsTerminalDownloadURL = "https://github.com/microsoft/terminal/releases/download/v1.15.3465.0/Microsoft.WindowsTerminal_Win10_1.15.3465.0_8wekyb3d8bbwe.msixbundle"
     $windowsTerminalDownloadPath = "$Env:TEMP\WindowsTerminal.msixbundle"
 
@@ -154,15 +153,12 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "workbench.colorTheme"             = "GitHub Light Default"
     "workbench.startupEditor"          = "none"
   }
-
   # Throw an error if the directory already exists
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
-
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code/"
-
   Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
   Expand-Archive $firaCodeArchivePath $firaCodePath
   # https://stackoverflow.com/a/67903796
@@ -172,7 +168,6 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
-
   if ($Using:InstallPython) {
     code --install-extension ms-python.python --force *>&1 | Write-Log
   }
@@ -183,20 +178,16 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 if ($InstallPython) {
   Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
-
     # https://stackoverflow.com/a/73534796
     if (
       (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
       "\bhref=`"(?<url>.+?\.exe)`"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)"
     ) { throw "Could not determine latest Python version and download URL" }
-
     # https://stackoverflow.com/a/21423159
     Start-BitsTransfer $Matches.url $pythonDownloadPath
-
     # https://stackoverflow.com/a/73665900
     Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
     Remove-Item $pythonDownloadPath
-
     # Reload PATH to run python and pip, https://stackoverflow.com/a/31845512
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
