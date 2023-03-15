@@ -106,7 +106,6 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 
     Start-BitsTransfer $desktopFrameworkPackageDownloadURL $desktopFrameworkPackageDownloadPath
     Start-BitsTransfer $windowsTerminalDownloadURL $windowsTerminalDownloadPath
-
     Add-AppxPackage $desktopFrameworkPackageDownloadPath -ErrorAction Stop *>&1 | Write-Log
     Add-AppxPackage $windowsTerminalDownloadPath -ErrorAction Stop *>&1 | Write-Log
 
@@ -118,10 +117,6 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 } | Out-Null
 
 Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  # https://stackoverflow.com/a/36705460
-  # https://stackoverflow.com/a/36751445
-  Remove-Item "$Env:USERPROFILE\.vscode\extensions" -Force -Recurse -ErrorAction SilentlyContinue
-
   $vscodeSettingsDir = "$Env:APPDATA\Code\User\"
   $vscodeSettings = [pscustomobject]@{
     "[python]"                         = [pscustomobject]@{
@@ -166,6 +161,9 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
   $type = Add-Type -MemberDefinition $signature -Name FontUtils -Namespace AddFontResource -Using System.Text -PassThru
   $type::AddFontResource("$firaCodePath/variable_ttf/FiraCode-VF.ttf") | Out-Null
 
+  # https://stackoverflow.com/a/36705460
+  # https://stackoverflow.com/a/36751445
+  Remove-Item "$Env:USERPROFILE\.vscode\extensions" -Force -Recurse -ErrorAction SilentlyContinue
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
   if ($Using:InstallPython) {
@@ -188,9 +186,9 @@ if ($InstallPython) {
     # https://stackoverflow.com/a/73665900
     Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
     Remove-Item $pythonDownloadPath
-    # Reload PATH to run python and pip, https://stackoverflow.com/a/31845512
-    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
+    # Reload PATH to run pip, https://stackoverflow.com/a/31845512
+    $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
     python -m pip install --upgrade pip | Write-Log
