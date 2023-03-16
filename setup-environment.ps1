@@ -201,4 +201,4 @@ if ($InstallPython) {
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 
-Write-Host "Done!"
+Write-Host-And-Log "Done!"
