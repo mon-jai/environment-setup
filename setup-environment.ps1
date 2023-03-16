@@ -145,6 +145,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     }
     "http.proxyStrictSSL"              = $false
     "python.analysis.typeCheckingMode" = "strict"
+    "python.formatting.provider"       = "black"
     "workbench.colorTheme"             = "GitHub Light Default"
     "workbench.startupEditor"          = "none"
   }
@@ -192,7 +193,7 @@ if ($InstallPython) {
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
     python -m pip install --upgrade pip | Write-Log
-    pip install -U autopep8 | Write-Log
+    pip install -U black | Write-Log
 
     Write-Host-And-Log "Installed and configured Python"
   } | Out-Null
