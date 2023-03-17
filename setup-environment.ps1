@@ -123,6 +123,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "[python]"                         = [pscustomobject]@{
       "editor.tabSize" = 4
     }
+    "clangd.path"                      = $clangdPath
     "code-runner.clearPreviousOutput"  = $true
     "code-runner.executorMap"          = [pscustomobject]@{
       # https://stackoverflow.com/a/53961913
@@ -205,12 +206,14 @@ if ($lang -eq "python") {
 }
 
 if ($lang -eq "c++" -or $lang -eq "cpp") {
-  $clangdArchivePath = "$Env:TEMP\clangd.zip"
-  Start-BitsTransfer "https://github.com/clangd/clangd/releases/download/15.0.6/clangd-windows-15.0.6.zip" $clangdArchivePath
-  Expand-Archive $clangdArchivePath $clangdPath
+  Start-Job -Name "Install clangd" -InitializationScript $add_custom_cmdlet -ScriptBlock {
+    $clangdArchivePath = "$Env:TEMP\clangd.zip"
+    Start-BitsTransfer "https://github.com/clangd/clangd/releases/download/15.0.6/clangd-windows-15.0.6.zip" $clangdArchivePath
+    Expand-Archive $clangdArchivePath $clangdPath
 
-  $clangdUnzippedPath = Get-ChildItem $clangdPath | Select-Object -first 1 | Select-Object -ExpandProperty FullName
-  Get-ChildItem $clangdUnzippedPath | % { mv ($_ | Select-Object -first 1 | Select-Object -ExpandProperty FullName) $clangdPath }
+    $clangdUnzippedPath = Get-ChildItem $clangdPath | Select-Object -first 1 | Select-Object -ExpandProperty FullName
+    Get-ChildItem $clangdUnzippedPath | ForEach-Object { Move-Item ($_ | Select-Object -first 1 | Select-Object -ExpandProperty FullName) $clangdPath }
+  } | Out-Null
 }
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
