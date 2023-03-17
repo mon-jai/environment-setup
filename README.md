@@ -16,15 +16,20 @@ Scripts for setting up a development environment in university's computers.
 
 ```powershell
 . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-  [-InstallPython]
+  [-Lang]
 ```
 
 ### Parameters
 
-#### `-InstallPython`
+#### `-Lang`
 
-Install Python and related tooling.
+Valid values:
 
+- `python`. Install Python and related tooling.
+
+- `c++`. Install C++ tooling.
+
+- `cpp`. Alias for `c++`.
 
 ## MISC
 
