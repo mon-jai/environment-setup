@@ -144,7 +144,6 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "files.associations"               = [pscustomobject]@{
       "*.xml" = "html"
     }
-    "http.proxyStrictSSL"              = $false
     "python.analysis.typeCheckingMode" = "strict"
     "python.formatting.provider"       = "black"
     "workbench.colorTheme"             = "GitHub Light Default"
