@@ -4,10 +4,10 @@ Param([string]$lang)
 
 Import-Module BitsTransfer
 
-# https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
-$Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
 $clangdPath = "$Env:USERPROFILE\clangd\"
 
+# https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
+$Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
 
@@ -211,8 +211,10 @@ if ($lang -eq "c++" -or $lang -eq "cpp") {
     Start-BitsTransfer "https://github.com/clangd/clangd/releases/download/15.0.6/clangd-windows-15.0.6.zip" $clangdArchivePath
     Expand-Archive $clangdArchivePath $Using:clangdPath
 
-    $clangdUnzippedPath = Get-ChildItem $Using:clangdPath | Select-Object -first 1 | Select-Object -ExpandProperty FullName
-    Get-ChildItem $clangdUnzippedPath | ForEach-Object { Move-Item ($_ | Select-Object -First 1 | Select-Object -ExpandProperty FullName) $Using:clangdPath }
+    $clangdUnzippedPath = (Get-ChildItem $Using:clangdPath)[0].FullName
+    Get-ChildItem $clangdUnzippedPath | ForEach-Object { Move-Item $_.FullName $Using:clangdPath }
+
+    Write-Host-And-Log "Installed clangd"
   } | Out-Null
 }
 
