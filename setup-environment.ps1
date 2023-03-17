@@ -139,6 +139,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "editor.lineHeight"                = 1.6
     "editor.renderWhitespace"          = "trailing"
     "editor.stickyScroll.enabled"      = $true
+    "editor.tabSize"                   = 4
     "explorer.confirmDelete"           = $false
     "files.associations"               = [pscustomobject]@{
       "*.xml" = "html"
