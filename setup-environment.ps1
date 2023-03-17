@@ -1,4 +1,4 @@
-Param([switch]$InstallPython)
+Param([string]$lang)
 
 # Copyright 2023 Loh Ka Hong | Licensed under MIT
 
@@ -6,6 +6,7 @@ Import-Module BitsTransfer
 
 # https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
 $Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
+$clangdPath = "$Env:USERPROFILE\clangd"
 
 # Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
 New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
@@ -167,14 +168,18 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
   Remove-Item "$Env:USERPROFILE\.vscode\extensions" -Force -Recurse -ErrorAction SilentlyContinue
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
-  if ($Using:InstallPython) {
+
+  if ($Using:lang -eq "python") {
     code --install-extension ms-python.python --force *>&1 | Write-Log
+  }
+  elseif ($lang -eq "c++" -or $lang -eq "cpp") {
+    code --install-extension llvm-vs-code-extensions.vscode-clangd --force *>&1 | Write-Log
   }
 
   Write-Host-And-Log "Configured VSCode"
 } | Out-Null
 
-if ($InstallPython) {
+if ($lang -eq "python") {
   Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
     # https://stackoverflow.com/a/73534796
@@ -197,6 +202,15 @@ if ($InstallPython) {
 
     Write-Host-And-Log "Installed and configured Python"
   } | Out-Null
+}
+
+if ($lang -eq "c++" -or $lang -eq "cpp") {
+  $clangdArchivePath = "$Env:TEMP\clangd.zip"
+  Start-BitsTransfer "https://github.com/clangd/clangd/releases/download/15.0.6/clangd-windows-15.0.6.zip" $clangdArchivePath
+  Expand-Archive $clangdArchivePath $clangdPath
+
+  $clangdUnzippedPath = Get-ChildItem $clangdPath | Select-Object -first 1 | Select-Object -ExpandProperty FullName
+  Get-ChildItem $clangdUnzippedPath | % { mv ($_ | Select-Object -first 1 | Select-Object -ExpandProperty FullName) $clangdPath }
 }
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop

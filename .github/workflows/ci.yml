@@ -10,7 +10,7 @@ jobs:
       cancel-in-progress: true
     strategy:
       matrix:
-        arguments: ["", "-InstallPython"]
+        arguments: ["", "-lang python", -lang cpp"]
     steps:
       - name: Download Visual Studio Code
         shell: powershell
