@@ -16,7 +16,7 @@ Scripts for setting up a development environment in university's computers.
 
 ```powershell
 . { Set-ExecutionPolicy Bypass -Scope Process -Force } *> $null; . ([scriptblock]::Create((irm 'https://raw.githubusercontent.com/mon-jai/environment-setup/main/setup-environment.ps1')))`
-  [-Lang]
+  [-Lang <ProgrammingLanguage>]
 ```
 
 ### Parameters
