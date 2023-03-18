@@ -3,11 +3,8 @@ Param([string]$lang)
 Import-Module BitsTransfer
 
 $clangdPath = "$Env:USERPROFILE\clangd\"
-
 # https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
 $Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
-# Redirect stderr to stdout, and drop the output, https://stackoverflow.com/a/11969703
-New-Item -Path $Env:SetupLogFilePath -ItemType File -Force | Out-Null
 
 # https://stackoverflow.com/a/39191466
 # https://stackoverflow.com/a/68882127
@@ -31,8 +28,6 @@ $add_custom_cmdlet = {
     }
   }
 }
-
-. $add_custom_cmdlet
 
 Start-Job -Name "Enable clipboard" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   try {
@@ -219,4 +214,5 @@ if ($lang -eq "c++" -or $lang -eq "cpp") {
 
 Get-Job | Receive-Job -Wait -ErrorAction Stop
 
+. $add_custom_cmdlet
 Write-Host-And-Log "Done!"
