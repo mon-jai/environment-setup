@@ -1,7 +1,5 @@
 Param([string]$lang)
 
-# Copyright 2023 Loh Ka Hong | Licensed under MIT
-
 Import-Module BitsTransfer
 
 $clangdPath = "$Env:USERPROFILE\clangd\"
@@ -213,6 +211,7 @@ if ($lang -eq "c++" -or $lang -eq "cpp") {
 
     $clangdUnzippedPath = (Get-ChildItem $Using:clangdPath)[0].FullName
     Get-ChildItem $clangdUnzippedPath | ForEach-Object { Move-Item $_.FullName $Using:clangdPath }
+    Remove-Item $clangdUnzippedPath
 
     Write-Host-And-Log "Installed clangd"
   } | Out-Null
