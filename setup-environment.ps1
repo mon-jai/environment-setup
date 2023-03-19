@@ -12,20 +12,29 @@ $add_custom_cmdlet = {
   function Write-Log {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
-    Process {
-      # https://social.technet.microsoft.com/Forums/windowsserver/en-US/51ef5275-02f8-423c-b2c9-a822c982ecf0/variable-scope-within-a-startjob-initializationscript#9eea0a0c-6ff8-4c2b-b832-158a55f4f5db-isAnswer
-      # https://github.com/PowerShell/PowerShell/issues/4530
-      $content | Out-File -Append -LiteralPath $Env:SetupLogFilePath
-    }
+
+    # https://social.technet.microsoft.com/Forums/windowsserver/en-US/51ef5275-02f8-423c-b2c9-a822c982ecf0/variable-scope-within-a-startjob-initializationscript#9eea0a0c-6ff8-4c2b-b832-158a55f4f5db-isAnswer
+    # https://github.com/PowerShell/PowerShell/issues/4530
+    $content | Out-File -Append -LiteralPath $Env:SetupLogFilePath
   }
 
   function Write-Host-And-Log {
     [CmdletBinding()]
     Param ([Parameter(ValueFromPipeline)] [string[]]$content)
-    Process {
-      Write-Host $content;
-      Write-Log $content;
+
+    Write-Host $content;
+    Write-Log $content;
+  }
+
+  function Merge-Object ($a, $b) {
+    $result = New-Object PSObject
+
+    # https://stackoverflow.com/a/45550182/11077662
+    $a.psobject.Properties + $b.psobject.Properties | ForEach-Object {
+      $result | Add-Member -MemberType $_.MemberType -Name $_.Name -Value $_.Value -Force
     }
+
+    Write-Output $result
   }
 }
 
@@ -111,47 +120,6 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 } | Out-Null
 
 Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
-  $vscodeSettingsDir = "$Env:APPDATA\Code\User\"
-  $vscodeSettings = [pscustomobject]@{
-    "[python]"                             = [pscustomobject]@{
-      "editor.tabSize" = 4
-    }
-    "clangd.path"                          = $Using:clangdPath
-    "code-runner.clearPreviousOutput"      = $true
-    "code-runner.executorMap"              = [pscustomobject]@{
-      # https://stackoverflow.com/a/53961913
-      "python" = "clear; & `"`$Env:LocalAppData\Programs\Python\Python311\python`" -u"
-    }
-    "code-runner.ignoreSelection"          = $true
-    "code-runner.runInTerminal"            = $true
-    "code-runner.saveFileBeforeRun"        = $true
-    "editor.cursorBlinking"                = "smooth"
-    "editor.fontFamily"                    = "Fira Code, Consolas, 'Courier New', monospace"
-    "editor.fontLigatures"                 = "'ss01', 'ss03', 'cv10'"
-    "editor.formatOnPaste"                 = $true
-    "editor.formatOnType"                  = $true
-    "editor.guides.bracketPairs"           = $true
-    "editor.lineHeight"                    = 1.6
-    "editor.renderWhitespace"              = "trailing"
-    "editor.stickyScroll.enabled"          = $true
-    "editor.tabSize"                       = 4
-    "explorer.confirmDelete"               = $false
-    "files.associations"                   = [pscustomobject]@{
-      "*.xml" = "html"
-    }
-    "python.analysis.typeCheckingMode"     = "strict"
-    "python.formatting.provider"           = "black"
-    "terminal.integrated.profiles.windows" = [pscustomobject]@{
-      "Ubuntu" = [pscustomobject]@{
-        "icon" = "terminal-ubuntu"
-        "path" = "ubuntu.exe"
-      }
-    }
-    "workbench.colorTheme"                 = "GitHub Light Default"
-    "workbench.startupEditor"              = "none"
-  }
-  ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" -Force "$vscodeSettingsDir\settings.json"
-
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code\"
   Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
@@ -167,12 +135,61 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
   code --install-extension formulahendry.code-runner --force *>&1 | Write-Log
   code --install-extension github.github-vscode-theme --force *>&1 | Write-Log
 
+  $vscodeSettings = [pscustomobject]@{
+    "editor.cursorBlinking"       = "smooth"
+    "editor.fontFamily"           = "Fira Code, Consolas, 'Courier New', monospace"
+    "editor.fontLigatures"        = "'ss01', 'ss03', 'cv10'"
+    "editor.formatOnPaste"        = $true
+    "editor.formatOnType"         = $true
+    "editor.guides.bracketPairs"  = $true
+    "editor.lineHeight"           = 1.6
+    "editor.renderWhitespace"     = "trailing"
+    "editor.stickyScroll.enabled" = $true
+    "editor.tabSize"              = 4
+    "explorer.confirmDelete"      = $false
+    "files.associations"          = [pscustomobject]@{
+      "*.xml" = "html"
+    }
+    "workbench.colorTheme"        = "GitHub Light Default"
+    "workbench.startupEditor"     = "none"
+  }
+
   if ($Using:lang -eq "python") {
+    $vscodeSettings = Merge-Object $vscodeSettings ([pscustomobject]@{
+        "[python]"                         = [pscustomobject]@{
+          "editor.tabSize" = 4
+        }
+        "code-runner.clearPreviousOutput"  = $true
+        "code-runner.executorMap"          = [pscustomobject]@{
+          # https://stackoverflow.com/a/53961913
+          "python" = "clear; & `"`$Env:LocalAppData\Programs\Python\Python311\python`" -u"
+        }
+        "code-runner.ignoreSelection"      = $true
+        "code-runner.runInTerminal"        = $true
+        "code-runner.saveFileBeforeRun"    = $true
+        "python.analysis.typeCheckingMode" = "strict"
+        "python.formatting.blackArgs"      = @("--skip-string-normalization")
+        "python.formatting.provider"       = "black"
+        "python.linting.mypyEnabled"       = $true
+      })
     code --install-extension ms-python.python --force *>&1 | Write-Log
   }
+
   elseif ($lang -eq "c++" -or $lang -eq "cpp") {
+    $vscodeSettings = Merge-Object $vscodeSettings ([pscustomobject]@{
+        "clangd.path"                                = "`$Using:clangdPath"
+        "terminal.integrated.defaultProfile.windows" = "my-pwsh"
+        "terminal.integrated.profiles.windows"       = [pscustomobject]@{
+          "Ubuntu" = [pscustomobject]@{
+            "icon" = "terminal-ubuntu"
+            "path" = "ubuntu.exe"
+          }
+        }
+      })
     code --install-extension llvm-vs-code-extensions.vscode-clangd --force *>&1 | Write-Log
   }
+
+  ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" -Force "$Env:APPDATA\Code\User\settings.json"
 
   Write-Host-And-Log "Configured VSCode"
 } | Out-Null
