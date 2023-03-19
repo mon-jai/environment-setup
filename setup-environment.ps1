@@ -168,6 +168,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
         "code-runner.runInTerminal"        = $true
         "code-runner.saveFileBeforeRun"    = $true
         "python.analysis.typeCheckingMode" = "strict"
+        "python.formatting.blackArgs"      = @("--preview")
         "python.formatting.provider"       = "black"
         "python.linting.mypyEnabled"       = $true
       })
