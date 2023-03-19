@@ -150,8 +150,6 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "workbench.colorTheme"                 = "GitHub Light Default"
     "workbench.startupEditor"              = "none"
   }
-  # Throw an error if the directory already exists
-  New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
 
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
