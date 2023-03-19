@@ -150,7 +150,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "workbench.colorTheme"                 = "GitHub Light Default"
     "workbench.startupEditor"              = "none"
   }
-  ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" "$vscodeSettingsDir\settings.json"
+  ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" -Force "$vscodeSettingsDir\settings.json"
 
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code\"
