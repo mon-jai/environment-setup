@@ -155,7 +155,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
   # https://stackoverflow.com/a/67903796
   $signature = "[DllImport(`"gdi32.dll`")]public static extern int AddFontResource(string lpszFilename);"
   $type = Add-Type -MemberDefinition $signature -Name FontUtils -Namespace AddFontResource -Using System.Text -PassThru
-  $type::AddFontResource("$firaCodePath/variable_ttf/FiraCode-VF.ttf") | Out-Null
+  $type::AddFontResource("$firaCodePath\variable_ttf\FiraCode-VF.ttf") | Out-Null
 
   # https://stackoverflow.com/a/36705460
   # https://stackoverflow.com/a/36751445
