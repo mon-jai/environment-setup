@@ -33,6 +33,10 @@ jobs:
           # https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/#examples
           "SetupLogFilePath=$Env:SetupLogFilePath" >> $Env:GITHUB_ENV
 
+      - name: Show generated VSCode settings
+        run: |
+          Get-Content -Path "$Env:APPDATA\Code\User\settings.json"
+
       - name: Show setup logs
         run: |
           Get-Content -Path ${{ env.SetupLogFilePath }}
