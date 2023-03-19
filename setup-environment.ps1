@@ -175,7 +175,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     code --install-extension ms-python.python --force *>&1 | Write-Log
   }
 
-  elseif ($lang -eq "c++" -or $lang -eq "cpp") {
+  elseif ($Using:lang -eq "c++" -or $Using:lang -eq "cpp") {
     $vscodeSettings = Merge-Object $vscodeSettings ([pscustomobject]@{
         "clangd.path"                                = "`$Using:clangdPath"
         "terminal.integrated.defaultProfile.windows" = "my-pwsh"
