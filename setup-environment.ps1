@@ -116,7 +116,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
     "[python]"                             = [pscustomobject]@{
       "editor.tabSize" = 4
     }
-    "clangd.path"                          = "`$Using:clangdPath"
+    "clangd.path"                          = $Using:clangdPath
     "code-runner.clearPreviousOutput"      = $true
     "code-runner.executorMap"              = [pscustomobject]@{
       # https://stackoverflow.com/a/53961913
