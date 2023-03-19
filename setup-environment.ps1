@@ -113,36 +113,42 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
 Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   $vscodeSettingsDir = "$Env:APPDATA\Code\User\"
   $vscodeSettings = [pscustomobject]@{
-    "[python]"                         = [pscustomobject]@{
+    "[python]"                             = [pscustomobject]@{
       "editor.tabSize" = 4
     }
-    "clangd.path"                      = $Using:clangdPath
-    "code-runner.clearPreviousOutput"  = $true
-    "code-runner.executorMap"          = [pscustomobject]@{
+    "clangd.path"                          = "`$Using:clangdPath"
+    "code-runner.clearPreviousOutput"      = $true
+    "code-runner.executorMap"              = [pscustomobject]@{
       # https://stackoverflow.com/a/53961913
       "python" = "clear; & `"`$Env:LocalAppData\Programs\Python\Python311\python`" -u"
     }
-    "code-runner.ignoreSelection"      = $true
-    "code-runner.runInTerminal"        = $true
-    "code-runner.saveFileBeforeRun"    = $true
-    "editor.cursorBlinking"            = "smooth"
-    "editor.fontFamily"                = "Fira Code, Consolas, 'Courier New', monospace"
-    "editor.fontLigatures"             = "'ss01', 'ss03', 'cv10'"
-    "editor.formatOnPaste"             = $true
-    "editor.formatOnType"              = $true
-    "editor.guides.bracketPairs"       = $true
-    "editor.lineHeight"                = 1.6
-    "editor.renderWhitespace"          = "trailing"
-    "editor.stickyScroll.enabled"      = $true
-    "editor.tabSize"                   = 4
-    "explorer.confirmDelete"           = $false
-    "files.associations"               = [pscustomobject]@{
+    "code-runner.ignoreSelection"          = $true
+    "code-runner.runInTerminal"            = $true
+    "code-runner.saveFileBeforeRun"        = $true
+    "editor.cursorBlinking"                = "smooth"
+    "editor.fontFamily"                    = "Fira Code, Consolas, 'Courier New', monospace"
+    "editor.fontLigatures"                 = "'ss01', 'ss03', 'cv10'"
+    "editor.formatOnPaste"                 = $true
+    "editor.formatOnType"                  = $true
+    "editor.guides.bracketPairs"           = $true
+    "editor.lineHeight"                    = 1.6
+    "editor.renderWhitespace"              = "trailing"
+    "editor.stickyScroll.enabled"          = $true
+    "editor.tabSize"                       = 4
+    "explorer.confirmDelete"               = $false
+    "files.associations"                   = [pscustomobject]@{
       "*.xml" = "html"
     }
-    "python.analysis.typeCheckingMode" = "strict"
-    "python.formatting.provider"       = "black"
-    "workbench.colorTheme"             = "GitHub Light Default"
-    "workbench.startupEditor"          = "none"
+    "python.analysis.typeCheckingMode"     = "strict"
+    "python.formatting.provider"           = "black"
+    "terminal.integrated.profiles.windows" = [pscustomobject]@{
+      "Ubuntu" = [pscustomobject]@{
+        "icon" = "terminal-ubuntu"
+        "path" = "ubuntu.exe"
+      }
+    }
+    "workbench.colorTheme"                 = "GitHub Light Default"
+    "workbench.startupEditor"              = "none"
   }
   # Throw an error if the directory already exists
   New-Item $vscodeSettingsDir -ItemType Directory -ErrorAction SilentlyContinue *>&1 | Write-Log
