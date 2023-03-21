@@ -76,13 +76,18 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   (New-Object -ComObject Shell.Application).Windows() | Where-Object { $_.FullName -eq "C:\Windows\explorer.exe" } | ForEach-Object { $_.Quit() }
 
   # https://stackoverflow.com/a/9701907
+  $chromePath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+  $chromeProfileDirectory = "mon-jai"
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
   $chromeShortcut.Arguments = "--profile-directory=`"Profile 1`""
-  $chromeShortcut.IconLocation = "$Env:LocalAppData\Google\Chrome\User Data\Profile 1\Google Profile.ico"
-  $chromeShortcut.TargetPath = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+  $chromeShortcut.IconLocation = "$Env:LocalAppData\Google\Chrome\User Data\$chromeProfileDirectory\Google Profile.ico"
+  $chromeShortcut.TargetPath = $chromePath
   $chromeShortcut.WorkingDirectory = "C:\Program Files (x86)\Google\Chrome\Application"
   $chromeShortcut.Save()
+
+  # https://stackoverflow.com/a/31601936
+  & $chromePath --profile-directory="$chromeProfileDirectory"
 
   $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
@@ -90,6 +95,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   & $pttbPath $chromeShortcutPath
   & $pttbPath "$Env:LocalAppData\Programs\Microsoft VS Code\Code.exe"
   & $pttbPath "$Env:windir\system32\SnippingTool.exe"
+
 
   Write-Host-And-Log "Configured taskbar"
 } | Out-Null
