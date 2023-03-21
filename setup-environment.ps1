@@ -124,7 +124,7 @@ Start-Job -Name "Install Windows Terminal" -InitializationScript $add_custom_cmd
   }
 } | Out-Null
 
-Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -ScriptBlock {
+Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -ScriptBlock {
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code\"
   Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
@@ -196,7 +196,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" -Force "$Env:APPDATA\Code\User\settings.json"
 
-  Write-Host-And-Log "Configured VSCode"
+  Write-Host-And-Log "Configured VS Code"
 } | Out-Null
 
 if ($lang -eq "python") {
