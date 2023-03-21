@@ -86,8 +86,8 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   $chromeShortcut.WorkingDirectory = "C:\Program Files (x86)\Google\Chrome\Application"
   $chromeShortcut.Save()
 
-  # https://stackoverflow.com/a/31601936
-  & $chromePath --profile-directory="$chromeProfileDirectory" --uninstall
+  # Don't run in CI environments
+  if (Test-Path $chromePath) { & $chromePath --profile-directory="$chromeProfileDirectory" --uninstall }
 
   $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
