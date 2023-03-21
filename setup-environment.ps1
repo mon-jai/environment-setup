@@ -177,7 +177,7 @@ Start-Job -Name "Configure VSCode" -InitializationScript $add_custom_cmdlet -Scr
 
   elseif ($Using:lang -eq "c++" -or $Using:lang -eq "cpp") {
     $vscodeSettings = Merge-Object $vscodeSettings ([pscustomobject]@{
-        "clangd.path"                                = "`$Using:clangdPath"
+        "clangd.path"                                = $Using:clangdPath
         "terminal.integrated.defaultProfile.windows" = "my-pwsh"
         "terminal.integrated.profiles.windows"       = [pscustomobject]@{
           "Ubuntu" = [pscustomobject]@{
