@@ -87,7 +87,7 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   $chromeShortcut.Save()
 
   # https://stackoverflow.com/a/31601936
-  & $chromePath --profile-directory="$chromeProfileDirectory"
+  & $chromePath --profile-directory="$chromeProfileDirectory" --uninstall
 
   $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
@@ -95,7 +95,6 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   & $pttbPath $chromeShortcutPath
   & $pttbPath "$Env:LocalAppData\Programs\Microsoft VS Code\Code.exe"
   & $pttbPath "$Env:windir\system32\SnippingTool.exe"
-
 
   Write-Host-And-Log "Configured taskbar"
 } | Out-Null
