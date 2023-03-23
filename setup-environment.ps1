@@ -178,6 +178,7 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
         "python.linting.mypyEnabled"       = $true
       })
     code --install-extension ms-python.python --force *>&1 | Write-Log
+    code --install-extension ms-pyright.pyright --force *>&1 | Write-Log
   }
 
   elseif ($Using:lang -eq "c++" -or $Using:lang -eq "cpp") {
