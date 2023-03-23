@@ -128,7 +128,7 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
   $firaCodeArchivePath = "$Env:TEMP\Fira_Code.zip"
   $firaCodePath = "$Env:TEMP\Fira_Code\"
   Start-BitsTransfer "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip" $firaCodeArchivePath
-  Expand-Archive $firaCodeArchivePath $firaCodePath
+  Expand-Archive $firaCodeArchivePath $firaCodePath -Force
   # https://stackoverflow.com/a/67903796
   $signature = "[DllImport(`"gdi32.dll`")]public static extern int AddFontResource(string lpszFilename);"
   $type = Add-Type -MemberDefinition $signature -Name FontUtils -Namespace AddFontResource -Using System.Text -PassThru
@@ -194,7 +194,7 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
     code --install-extension llvm-vs-code-extensions.vscode-clangd --force *>&1 | Write-Log
   }
 
-  ConvertTo-Json -InputObject $vscodeSettings | Out-File -Encoding "UTF8" -Force "$Env:APPDATA\Code\User\settings.json"
+  ConvertTo-Json -InputObject $vscodeSettings | Out-File "$Env:APPDATA\Code\User\settings.json" -Encoding "UTF8" -Force 
 
   Write-Host-And-Log "Configured VS Code"
 } | Out-Null
@@ -217,7 +217,7 @@ if ($lang -eq "python") {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
-    python -m pip install --upgrade pip mypy black | Write-Log
+    python -m pip install pip mypy black --upgrade | Write-Log
 
     Write-Host-And-Log "Installed and configured Python"
   } | Out-Null
