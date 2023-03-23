@@ -80,14 +80,14 @@ Start-Job -Name "Configure taskbar" -InitializationScript $add_custom_cmdlet -Sc
   $chromeProfileDirectory = "mon-jai"
   $chromeShortcutPath = "$Env:TEMP\chrome.lnk"
   $chromeShortcut = (New-Object -comObject WScript.Shell).CreateShortcut($chromeShortcutPath)
-  $chromeShortcut.Arguments = "--profile-directory=`"Profile 1`""
+  $chromeShortcut.Arguments = "--profile-directory=`"$chromeProfileDirectory`""
   $chromeShortcut.IconLocation = "$Env:LocalAppData\Google\Chrome\User Data\$chromeProfileDirectory\Google Profile.ico"
   $chromeShortcut.TargetPath = $chromePath
   $chromeShortcut.WorkingDirectory = "C:\Program Files (x86)\Google\Chrome\Application"
   $chromeShortcut.Save()
 
   # Don't run in CI environments
-  if (Test-Path $chromePath) { & $chromePath --profile-directory="$chromeProfileDirectory" --uninstall }
+  if (Test-Path $chromePath) { & $chromePath --profile-directory="$chromeProfileDirectory" }
 
   $pttbPath = "$Env:TEMP\pttb.exe"
   Start-BitsTransfer "https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/raw/1c48814/pttb.exe" $pttbPath
