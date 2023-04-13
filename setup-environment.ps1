@@ -2,6 +2,9 @@ Param([string]$lang)
 
 Import-Module BitsTransfer
 
+if ($lang -eq "c++") { $lang = "cpp" }
+if ($lang -eq "py") { $lang = "python" }
+
 $clangdPath = "$Env:USERPROFILE\clangd\"
 # https://github.com/Azure/azure-iot-protocol-gateway/blob/0c21567/host/ProtocolGateway.Host.Fabric.FrontEnd/PackageRoot/Code/InstallDotNet48.ps1#L69
 $Env:SetupLogFilePath = Join-Path $Env:TEMP -ChildPath "setup-log.txt"
@@ -181,7 +184,7 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
     code --install-extension ms-pyright.pyright --force *>&1 | Write-Log
   }
 
-  elseif ($Using:lang -eq "c++" -or $Using:lang -eq "cpp") {
+  elseif ($Using:lang -eq "cpp") {
     $vscodeSettings = Merge-Object $vscodeSettings ([pscustomobject]@{
         "clangd.path"                                = "$Using:clangdPath\bin\clangd.exe"
         "terminal.integrated.defaultProfile.windows" = "my-pwsh"
@@ -224,7 +227,7 @@ if ($lang -eq "python") {
   } | Out-Null
 }
 
-if ($lang -eq "c++" -or $lang -eq "cpp") {
+if ($lang -eq "cpp") {
   Start-Job -Name "Install clangd" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $clangdArchivePath = "$Env:TEMP\clangd.zip"
     Start-BitsTransfer "https://github.com/clangd/clangd/releases/download/15.0.6/clangd-windows-15.0.6.zip" $clangdArchivePath
