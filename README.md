@@ -25,11 +25,9 @@ Scripts for setting up a development environment in university's computers.
 
 Valid values:
 
-- `python`. Install Python and related tooling.
+- `python`/`py`. Install Python and related tooling.
 
-- `c++`. Install C++ tooling.
-
-- `cpp`. Alias for `c++`.
+- `c++`/`cpp`. Install C++ tooling.
 
 ## MISC
 
