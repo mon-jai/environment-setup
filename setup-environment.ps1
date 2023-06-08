@@ -206,13 +206,10 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
 if ($lang -eq "python") {
   Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
-    # https://stackoverflow.com/a/73534796
-    if (
-      (Invoke-RestMethod "https://www.python.org/downloads/windows/") -notmatch
-      '\bhref="(?<url>.+?\.exe)"\s*>\s*Windows installer \(64-bit\)'
-    ) { throw "Could not determine latest Python version and download URL" }
+    # https://stackoverflow.com/a/76426120
+    $latestPythonVersion = (Invoke-RestMethod 'https://github.com/python/cpython/releases.atom'.title) -replace "^v" -notmatch "[a-z]" | Sort-Object { [version] $_ } -Descending | Select-Object -First 1
     # https://stackoverflow.com/a/21423159
-    Start-BitsTransfer $Matches.url $pythonDownloadPath
+    Start-BitsTransfer "https://www.python.org/ftp/python/${PyLatestVersion}/python-${PyLatestVersion}-amd64.exe" $pythonDownloadPath
     # https://stackoverflow.com/a/73665900
     Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
     Remove-Item $pythonDownloadPath
