@@ -209,7 +209,7 @@ if ($lang -eq "python") {
     # https://stackoverflow.com/a/73534796
     if (
       (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
-      "\bhref=`"(?<url>.+?\.exe)`"\s*>\s*Download Python (?<version>\d+\.\d+\.\d+)"
+      '\bhref="(?<url>.+?\.exe)"\s*>\s*Windows installer \(64-bit\)'
     ) { throw "Could not determine latest Python version and download URL" }
     # https://stackoverflow.com/a/21423159
     Start-BitsTransfer $Matches.url $pythonDownloadPath
