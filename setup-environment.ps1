@@ -208,7 +208,7 @@ if ($lang -eq "python") {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
     # https://stackoverflow.com/a/73534796
     if (
-      (Invoke-RestMethod "https://www.python.org/downloads/") -notmatch
+      (Invoke-RestMethod "https://www.python.org/downloads/windows/") -notmatch
       '\bhref="(?<url>.+?\.exe)"\s*>\s*Windows installer \(64-bit\)'
     ) { throw "Could not determine latest Python version and download URL" }
     # https://stackoverflow.com/a/21423159
