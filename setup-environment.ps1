@@ -207,9 +207,8 @@ if ($lang -eq "python") {
   Start-Job -Name "Install and configure Python" -InitializationScript $add_custom_cmdlet -ScriptBlock {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
     # https://stackoverflow.com/a/76426120
-    $latestPythonVersion = (Invoke-RestMethod 'https://github.com/python/cpython/releases.atom'.title) -replace "^v" -notmatch "[a-z]" | Sort-Object { [version] $_ } -Descending | Select-Object -First 1
-    # https://stackoverflow.com/a/21423159
-    Start-BitsTransfer "https://www.python.org/ftp/python/${PyLatestVersion}/python-${PyLatestVersion}-amd64.exe" $pythonDownloadPath
+    $latestPythonVersion = (Invoke-RestMethod "https://github.com/python/cpython/releases.atom").title -replace "^v" -notmatch "[a-z]" | Sort-Object { [version] $_ } -Descending | Select-Object -First 1    # https://stackoverflow.com/a/21423159
+    Start-BitsTransfer "https://www.python.org/ftp/python/${latestPythonVersion}/python-${latestPythonVersion}-amd64.exe" $pythonDownloadPath
     # https://stackoverflow.com/a/73665900
     Start-Process $pythonDownloadPath -ArgumentList "/quiet", "PrependPath=1", "InstallLauncherAllUsers=0" -NoNewWindow -Wait
     Remove-Item $pythonDownloadPath
