@@ -198,7 +198,7 @@ Start-Job -Name "Configure VS Code" -InitializationScript $add_custom_cmdlet -Sc
     code --install-extension llvm-vs-code-extensions.vscode-clangd --force *>&1 | Write-Log
   }
 
-  ConvertTo-Json -InputObject $vscodeSettings | Out-File "$Env:APPDATA\Code\User\settings.json" -Encoding "UTF8" -Force 
+  ConvertTo-Json -InputObject $vscodeSettings | Out-File "$Env:APPDATA\Code\User\settings.json" -Encoding "UTF8" -Force
 
   Write-Host-And-Log "Configured VS Code"
 } | Out-Null
@@ -208,6 +208,7 @@ if ($lang -eq "python") {
     $pythonDownloadPath = "$Env:TEMP\python.exe"
     # https://stackoverflow.com/a/76426120
     $latestPythonVersion = (Invoke-RestMethod "https://github.com/python/cpython/releases.atom").title -replace "^v" -notmatch "[a-z]" | Sort-Object { [version] $_ } -Descending | Select-Object -First 1
+
     # https://stackoverflow.com/a/21423159
     Start-BitsTransfer "https://www.python.org/ftp/python/${latestPythonVersion}/python-${latestPythonVersion}-amd64.exe" $pythonDownloadPath
     # https://stackoverflow.com/a/73665900
@@ -218,7 +219,7 @@ if ($lang -eq "python") {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
-    python -m pip install pip mypy black ipykernel --upgrade | Write-Log
+    pip install pip mypy black ipykernel --upgrade | Write-Log
 
     Write-Host-And-Log "Installed and configured Python"
   } | Out-Null
