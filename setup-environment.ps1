@@ -221,7 +221,7 @@ if ($lang -eq "python") {
     $Env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     # https://stackoverflow.com/a/67796873
     pip config set global.trusted-host "pypi.org files.pythonhosted.org pypi.python.org" | Write-Log
-    python -m pip install pip mypy black --upgrade | Write-Log
+    python -m pip install pip mypy black ipykernel --upgrade | Write-Log
 
     Write-Host-And-Log "Installed and configured Python"
   } | Out-Null
